@@ -20,4 +20,11 @@ type (
 var (
 	ClampLimit        = core.ClampLimit
 	ContainsTraversal = core.ContainsTraversal
+	ProbePermission   = core.ProbePermission
+	ProbeAll          = core.ProbeAll
 )
+
+// Re-export permission types from core (SSOT for permission requirements).
+type PermissionStatus = core.PermissionStatus
+
+var CategoryPermissions = core.CategoryPermissions
