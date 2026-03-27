@@ -72,14 +72,13 @@ func Register(r core.Registry) {
 
 	r.Add(core.Tool{
 		Name:        "apple_reminders_search",
-		Description: "Search reminders by title or notes content. Case-insensitive.",
+		Description: "Search reminders by title or notes content. Case-insensitive. Omit query to list all reminders.",
 		Parameters: json.RawMessage(`{
   "type": "object",
   "properties": {
     "query": {"type": "string", "description": "Search text to match against reminder title and notes"},
     "limit": {"type": "integer", "default": 20, "minimum": 1, "maximum": 200, "description": "Maximum number of results"}
   },
-  "required": ["query"],
   "additionalProperties": false
 }`),
 		Handler: handleSearch,
@@ -178,9 +177,6 @@ func handleSearch(ctx context.Context, input json.RawMessage) (string, error) {
 	}
 
 	p.Query = strings.TrimSpace(p.Query)
-	if p.Query == "" {
-		return "", fmt.Errorf("%w: query must not be empty", core.ErrInvalidInput)
-	}
 
 	p.Limit = clampLimit(p.Limit, 20)
 

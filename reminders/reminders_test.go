@@ -113,7 +113,13 @@ func TestList_InvalidStatusValues(t *testing.T) {
 	}
 }
 
+// TestSearch_EmptyQuery verifies that omitting or passing an empty query
+// does not produce a validation error (list-all mode).
 func TestSearch_EmptyQuery(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping: would invoke JXA")
+	}
+
 	reg := newRegistry()
 
 	cases := []map[string]any{
@@ -123,11 +129,9 @@ func TestSearch_EmptyQuery(t *testing.T) {
 	}
 	for _, params := range cases {
 		_, err := testutil.CallTool(t, reg, "apple_reminders_search", params)
-		if err == nil {
-			t.Fatalf("expected error for params %v", params)
-		}
-		if !errors.Is(err, core.ErrInvalidInput) {
-			t.Errorf("expected ErrInvalidInput for params %v, got: %v", params, err)
+		// Should not produce ErrInvalidInput; JXA/timeout/permission errors are OK.
+		if errors.Is(err, core.ErrInvalidInput) {
+			t.Errorf("empty query should not produce ErrInvalidInput for params %v, got: %v", params, err)
 		}
 	}
 }

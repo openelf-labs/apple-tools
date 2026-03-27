@@ -10,21 +10,27 @@ type PermissionStatus struct {
 	Permission string `json:"permission"`
 }
 
-// CategoryPermissions defines permission requirements per category (SSOT).
-var CategoryPermissions = map[string]string{
-	"calendar": "automation", "reminders": "automation", "contacts": "automation",
-	"notes": "automation", "mail": "automation", "messages": "full_disk_access",
-	"music": "automation", "safari": "automation", "finder": "automation",
-	"shortcuts": "none", "system": "none", "clipboard": "none",
-	"notification": "none", "spotlight": "none",
+// CategoryPermission describes a tool category's permission requirements.
+type CategoryPermission struct {
+	Type        string `json:"type"`
+	SettingsURL string `json:"settings_url"`
 }
 
-// ProbePermission is a no-op on non-macOS platforms.
-func ProbePermission(_ context.Context, category string) PermissionStatus {
+// CategoryPermissions defines permission requirements per category (SSOT).
+var CategoryPermissions = map[string]CategoryPermission{
+	"calendar": {Type: "automation"}, "reminders": {Type: "automation"}, "contacts": {Type: "automation"},
+	"notes": {Type: "automation"}, "mail": {Type: "automation"}, "messages": {Type: "full_disk_access"},
+	"music": {Type: "automation"}, "safari": {Type: "automation"}, "finder": {Type: "automation"},
+	"shortcuts": {Type: "none"}, "system": {Type: "none"}, "clipboard": {Type: "none"},
+	"notification": {Type: "none"}, "spotlight": {Type: "none"},
+}
+
+func ProbePermission(_ context.Context, _ string) PermissionStatus {
 	return PermissionStatus{Status: "unavailable", Permission: "none"}
 }
 
-// ProbeAll is a no-op on non-macOS platforms.
 func ProbeAll(_ context.Context, _ map[string]bool) map[string]PermissionStatus {
 	return nil
 }
+
+func OpenSystemSettings(_ string) error { return nil }

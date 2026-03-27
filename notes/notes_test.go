@@ -57,40 +57,25 @@ func TestRegister_ToolsHaveSchemas(t *testing.T) {
 
 // --- Parameter validation tests ---
 
+// TestSearch_EmptyQuery verifies that omitting or passing an empty query
+// does not produce a validation error (list-all mode).
 func TestSearch_EmptyQuery(t *testing.T) {
-	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_notes_search", map[string]any{
-		"query": "",
-	})
-	if err == nil {
-		t.Fatal("expected error for empty query")
+	if testing.Short() {
+		t.Skip("skipping: would invoke JXA")
 	}
-	if !errors.Is(err, core.ErrInvalidInput) {
-		t.Errorf("expected ErrInvalidInput, got: %v", err)
-	}
-}
 
-func TestSearch_MissingQuery(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_notes_search", map[string]any{})
-	if err == nil {
-		t.Fatal("expected error for missing query")
+	cases := []map[string]any{
+		{"query": ""},
+		{},
+		{"query": "   "},
 	}
-	if !errors.Is(err, core.ErrInvalidInput) {
-		t.Errorf("expected ErrInvalidInput, got: %v", err)
-	}
-}
-
-func TestSearch_WhitespaceQuery(t *testing.T) {
-	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_notes_search", map[string]any{
-		"query": "   ",
-	})
-	if err == nil {
-		t.Fatal("expected error for whitespace-only query")
-	}
-	if !errors.Is(err, core.ErrInvalidInput) {
-		t.Errorf("expected ErrInvalidInput, got: %v", err)
+	for _, params := range cases {
+		_, err := testutil.CallTool(t, reg, "apple_notes_search", params)
+		// Should not produce ErrInvalidInput; JXA/timeout/permission errors are OK.
+		if errors.Is(err, core.ErrInvalidInput) {
+			t.Errorf("empty query should not produce ErrInvalidInput, params=%v, got: %v", params, err)
+		}
 	}
 }
 

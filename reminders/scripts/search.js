@@ -10,10 +10,7 @@ app.includeStandardAdditions = true;
 
 var query = (params.query || "").toLowerCase();
 var limit = params.limit || 20;
-
-if (!query) {
-  throw new Error("query parameter is required");
-}
+var matchAll = !query || query.length === 0;
 
 var results = [];
 var lists = app.lists();
@@ -30,6 +27,7 @@ for (var li = 0; li < lists.length; li++) {
     var notes = rem.body() || "";
 
     if (
+      !matchAll &&
       title.toLowerCase().indexOf(query) === -1 &&
       notes.toLowerCase().indexOf(query) === -1
     ) {

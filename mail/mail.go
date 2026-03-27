@@ -286,7 +286,7 @@ func toolSearchMessages() core.Tool {
 		Name: "apple_mail_search",
 		Description: `Search email messages by content, subject, or sender.
 
-Performs a case-insensitive search across messages. Optionally restrict to a specific mailbox. Returns matching messages sorted by date (newest first).`,
+Performs a case-insensitive search across messages. Optionally restrict to a specific mailbox. Returns matching messages sorted by date (newest first). Omit query to list recent messages across mailboxes.`,
 		Parameters: json.RawMessage(`{
   "type": "object",
   "properties": {
@@ -307,7 +307,6 @@ Performs a case-insensitive search across messages. Optionally restrict to a spe
       "description": "Only search messages received after this ISO 8601 date."
     }
   },
-  "required": ["query"],
   "additionalProperties": false
 }`),
 		Handler: handleSearchMessages,
@@ -321,9 +320,6 @@ func handleSearchMessages(ctx context.Context, input json.RawMessage) (string, e
 	}
 
 	p.Query = strings.TrimSpace(p.Query)
-	if p.Query == "" {
-		return "", fmt.Errorf("%w: 'query' is required and must not be empty", core.ErrInvalidInput)
-	}
 
 	if p.Since != "" {
 		if _, err := time.Parse(time.RFC3339, p.Since); err != nil {

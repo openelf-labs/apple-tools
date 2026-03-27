@@ -9,6 +9,7 @@ var mail = Application("Mail");
 mail.includeStandardAdditions = true;
 
 var query = (params.query || "").toLowerCase();
+var matchAll = !query || query.length === 0;
 var limit = params.limit || 10;
 var sinceDate = params.since ? new Date(params.since) : null;
 
@@ -62,6 +63,7 @@ function searchMailbox(mb, results) {
         try { content = msg.content() || ""; } catch (e) {}
 
         if (
+          !matchAll &&
           subject.toLowerCase().indexOf(query) === -1 &&
           sender.toLowerCase().indexOf(query) === -1 &&
           content.toLowerCase().indexOf(query) === -1

@@ -23,9 +23,13 @@ func TestCategoryPermissions_Complete(t *testing.T) {
 
 func TestCategoryPermissions_ValidValues(t *testing.T) {
 	validPerms := map[string]bool{"automation": true, "full_disk_access": true, "none": true}
-	for cat, perm := range CategoryPermissions {
-		if !validPerms[perm] {
-			t.Errorf("CategoryPermissions[%q] = %q, not a valid permission type", cat, perm)
+	for cat, cp := range CategoryPermissions {
+		if !validPerms[cp.Type] {
+			t.Errorf("CategoryPermissions[%q].Type = %q, not a valid permission type", cat, cp.Type)
+		}
+		// Automation and FDA categories should have a settings URL
+		if cp.Type != "none" && cp.SettingsURL == "" {
+			t.Errorf("CategoryPermissions[%q] requires %s but has no SettingsURL", cat, cp.Type)
 		}
 	}
 }

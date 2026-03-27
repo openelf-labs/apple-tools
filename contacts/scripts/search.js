@@ -5,7 +5,12 @@ var query = params.query;
 var limit = params.limit || 25;
 
 var app = Application("Contacts");
-var people = app.people.whose({name: {_contains: query}});
+var people;
+if (query && query.length > 0) {
+	people = app.people.whose({name: {_contains: query}});
+} else {
+	people = app.people();
+}
 var count = Math.min(people.length, limit);
 var results = [];
 

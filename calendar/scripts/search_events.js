@@ -9,6 +9,7 @@ var cal = Application("Calendar");
 cal.includeStandardAdditions = true;
 
 var query = (params.query || "").toLowerCase();
+var matchAll = !query || query.length === 0;
 var limit = params.limit || 10;
 
 // Default search range: past 30 days to next 90 days
@@ -37,7 +38,7 @@ for (var ci = 0; ci < calendars.length; ci++) {
     var ev = events[ei];
     try {
       var title = ev.summary() || "";
-      if (title.toLowerCase().indexOf(query) === -1) {
+      if (!matchAll && title.toLowerCase().indexOf(query) === -1) {
         continue;
       }
 

@@ -141,7 +141,7 @@ func toolSearchEvents() core.Tool {
 		Name: "apple_calendar_search",
 		Description: `Search calendar events by title.
 
-Performs a case-insensitive search across all calendars. By default searches events from 30 days ago to 90 days in the future. Use from/to parameters to narrow the search window.`,
+Performs a case-insensitive search across all calendars. By default searches events from 30 days ago to 90 days in the future. Use from/to parameters to narrow the search window. Omit query to list events in the date range.`,
 		Parameters: json.RawMessage(`{
   "type": "object",
   "properties": {
@@ -162,7 +162,6 @@ Performs a case-insensitive search across all calendars. By default searches eve
       "description": "Maximum number of events to return (1-100). Defaults to 10."
     }
   },
-  "required": ["query"],
   "additionalProperties": false
 }`),
 		Handler: handleSearchEvents,
@@ -176,9 +175,6 @@ func handleSearchEvents(ctx context.Context, input json.RawMessage) (string, err
 	}
 
 	p.Query = strings.TrimSpace(p.Query)
-	if p.Query == "" {
-		return "", fmt.Errorf("%w: 'query' is required and must not be empty", core.ErrInvalidInput)
-	}
 
 	if p.From != "" {
 		if _, err := time.Parse(time.RFC3339, p.From); err != nil {

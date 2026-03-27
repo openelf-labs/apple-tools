@@ -111,7 +111,7 @@ func toolSearch() core.Tool {
 		Name: "apple_notes_search",
 		Description: `Search notes in Apple Notes by text.
 
-Performs a case-insensitive search across note names and body content in all folders. Returns matching notes sorted by modification date.`,
+Performs a case-insensitive search across note names and body content in all folders. Returns matching notes sorted by modification date. Omit query to list all notes.`,
 		Parameters: json.RawMessage(`{
   "type": "object",
   "properties": {
@@ -124,7 +124,6 @@ Performs a case-insensitive search across note names and body content in all fol
       "description": "Maximum number of notes to return (1-200). Defaults to 50."
     }
   },
-  "required": ["query"],
   "additionalProperties": false
 }`),
 		Handler: handleSearch,
@@ -138,9 +137,6 @@ func handleSearch(ctx context.Context, input json.RawMessage) (string, error) {
 	}
 
 	p.Query = strings.TrimSpace(p.Query)
-	if p.Query == "" {
-		return "", fmt.Errorf("%w: 'query' is required and must not be empty", core.ErrInvalidInput)
-	}
 
 	p.Limit = clampLimit(p.Limit, 50)
 

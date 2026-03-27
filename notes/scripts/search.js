@@ -11,6 +11,8 @@ app.includeStandardAdditions = true;
 var query = (params.query || "").toLowerCase();
 var limit = params.limit || 50;
 
+var matchAll = !query || query.length === 0;
+
 var results = [];
 var folders = app.folders();
 
@@ -28,6 +30,7 @@ for (var fi = 0; fi < folders.length; fi++) {
       try { body = note.plaintext() || ""; } catch (e) {}
 
       if (
+        matchAll ||
         name.toLowerCase().indexOf(query) !== -1 ||
         body.toLowerCase().indexOf(query) !== -1
       ) {

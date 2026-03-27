@@ -25,6 +25,12 @@ var (
 )
 
 // Re-export permission types from core (SSOT for permission requirements).
-type PermissionStatus = core.PermissionStatus
+type (
+	PermissionStatus   = core.PermissionStatus
+	CategoryPermission = core.CategoryPermission
+)
 
-var CategoryPermissions = core.CategoryPermissions
+var (
+	CategoryPermissions = core.CategoryPermissions
+	OpenSystemSettings  = core.OpenSystemSettings
+)

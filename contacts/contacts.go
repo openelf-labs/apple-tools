@@ -38,13 +38,13 @@ var phonePattern = regexp.MustCompile(`^\+?[\d\s\-().]{3,20}$`)
 func Register(r core.Registry) {
 	r.Add(core.Tool{
 		Name:        "apple_contacts_search",
-		Description: "Search contacts in macOS Contacts app by name. Returns matching contacts with name, phone numbers, emails, organization, and job title.",
+		Description: "Search contacts in macOS Contacts app by name. Omit query to list all contacts. Returns matching contacts with name, phone numbers, emails, organization, and job title.",
 		Parameters: json.RawMessage(`{
 			"type": "object",
 			"properties": {
 				"query": {
 					"type": "string",
-					"description": "Name or partial name to search for"
+					"description": "Name or partial name to search for. Omit or empty to list all contacts."
 				},
 				"limit": {
 					"type": "integer",
@@ -52,7 +52,6 @@ func Register(r core.Registry) {
 					"default": 25
 				}
 			},
-			"required": ["query"],
 			"additionalProperties": false
 		}`),
 		Handler: handleSearch,
@@ -103,9 +102,7 @@ func handleSearch(ctx context.Context, input json.RawMessage) (string, error) {
 	}
 
 	params.Query = strings.TrimSpace(params.Query)
-	if params.Query == "" {
-		return "", fmt.Errorf("%w: query must not be empty", core.ErrInvalidInput)
-	}
+	// Empty query = list all contacts (up to limit)
 	params.Limit = core.ClampLimit(params.Limit, 25, 200)
 
 	result, err := core.RunJXA(ctx, scriptSearch, params)
