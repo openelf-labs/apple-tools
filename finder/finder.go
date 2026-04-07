@@ -46,7 +46,7 @@ type revealResult struct {
 
 func toolReveal() core.Tool {
 	return core.Tool{
-		Name: "apple_finder_reveal",
+		Name: "finder_reveal",
 		Description: `Reveal a file or folder in Finder.
 
 Opens Finder and selects the specified file or folder. The path must be an absolute POSIX path (starting with /).`,

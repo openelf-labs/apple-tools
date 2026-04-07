@@ -25,9 +25,9 @@ func TestRegister(t *testing.T) {
 	}
 
 	expected := []string{
-		"apple_messages_send",
-		"apple_messages_read",
-		"apple_messages_unread",
+		"messages_send",
+		"messages_read",
+		"messages_unread",
 	}
 	names := reg.ToolNames()
 	sort.Strings(names)
@@ -58,7 +58,7 @@ func TestRegister_ToolsHaveSchemas(t *testing.T) {
 
 func TestSend_EmptyPhoneNumber(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_messages_send", map[string]any{
+	_, err := testutil.CallTool(t, reg, "messages_send", map[string]any{
 		"phoneNumber": "",
 		"message":     "hello",
 	})
@@ -72,7 +72,7 @@ func TestSend_EmptyPhoneNumber(t *testing.T) {
 
 func TestSend_MissingPhoneNumber(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_messages_send", map[string]any{
+	_, err := testutil.CallTool(t, reg, "messages_send", map[string]any{
 		"message": "hello",
 	})
 	if err == nil {
@@ -85,7 +85,7 @@ func TestSend_MissingPhoneNumber(t *testing.T) {
 
 func TestSend_InvalidPhoneNumber(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_messages_send", map[string]any{
+	_, err := testutil.CallTool(t, reg, "messages_send", map[string]any{
 		"phoneNumber": "abc",
 		"message":     "hello",
 	})
@@ -99,7 +99,7 @@ func TestSend_InvalidPhoneNumber(t *testing.T) {
 
 func TestSend_EmptyMessage(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_messages_send", map[string]any{
+	_, err := testutil.CallTool(t, reg, "messages_send", map[string]any{
 		"phoneNumber": "+15551234567",
 		"message":     "",
 	})
@@ -113,7 +113,7 @@ func TestSend_EmptyMessage(t *testing.T) {
 
 func TestSend_MissingMessage(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_messages_send", map[string]any{
+	_, err := testutil.CallTool(t, reg, "messages_send", map[string]any{
 		"phoneNumber": "+15551234567",
 	})
 	if err == nil {
@@ -136,7 +136,7 @@ func TestSend_EmailAsPhoneNumber(t *testing.T) {
 
 func TestRead_EmptyPhoneNumber(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_messages_read", map[string]any{
+	_, err := testutil.CallTool(t, reg, "messages_read", map[string]any{
 		"phoneNumber": "",
 	})
 	if err == nil {
@@ -149,7 +149,7 @@ func TestRead_EmptyPhoneNumber(t *testing.T) {
 
 func TestRead_InvalidPhoneNumber(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_messages_read", map[string]any{
+	_, err := testutil.CallTool(t, reg, "messages_read", map[string]any{
 		"phoneNumber": "not-a-phone",
 	})
 	if err == nil {

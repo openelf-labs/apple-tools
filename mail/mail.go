@@ -76,7 +76,7 @@ type mailboxInfo struct {
 
 func toolListMailboxes() core.Tool {
 	return core.Tool{
-		Name: "apple_mail_mailboxes",
+		Name: "mail_mailboxes",
 		Description: `List all mailboxes from all configured mail accounts.
 
 Returns mailbox paths (e.g., "iCloud/INBOX", "Gmail/[Gmail]/All Mail") with unread and total message counts. Use these paths as the mailbox parameter in other mail tools.`,
@@ -136,16 +136,16 @@ type listResult struct {
 
 func toolListMessages() core.Tool {
 	return core.Tool{
-		Name: "apple_mail_list",
+		Name: "mail_list",
 		Description: `List messages in a specific mailbox.
 
-Returns messages sorted by date (newest first). Use the mailbox path from apple_mail_mailboxes (e.g., "iCloud/INBOX"). Supports filtering by unread status, sender, and date.`,
+Returns messages sorted by date (newest first). Use the mailbox path from mail_mailboxes (e.g., "iCloud/INBOX"). Supports filtering by unread status, sender, and date.`,
 		Parameters: json.RawMessage(`{
   "type": "object",
   "properties": {
     "mailbox": {
       "type": "string",
-      "description": "Mailbox path (e.g., 'iCloud/INBOX'). Use apple_mail_mailboxes to find available paths."
+      "description": "Mailbox path (e.g., 'iCloud/INBOX'). Use mail_mailboxes to find available paths."
     },
     "limit": {
       "type": "integer",
@@ -219,10 +219,10 @@ type readParams struct {
 
 func toolReadMessage() core.Tool {
 	return core.Tool{
-		Name: "apple_mail_read",
+		Name: "mail_read",
 		Description: `Read the full content of a specific email message.
 
-Returns the message body, sender, recipients, and metadata. Use the messageId from apple_mail_list or apple_mail_search results. Body is truncated to maxLength characters (default 10000).`,
+Returns the message body, sender, recipients, and metadata. Use the messageId from mail_list or mail_search results. Body is truncated to maxLength characters (default 10000).`,
 		Parameters: json.RawMessage(`{
   "type": "object",
   "properties": {
@@ -283,7 +283,7 @@ type searchParams struct {
 
 func toolSearchMessages() core.Tool {
 	return core.Tool{
-		Name: "apple_mail_search",
+		Name: "mail_search",
 		Description: `Search email messages by content, subject, or sender.
 
 Performs a case-insensitive search across messages. Optionally restrict to a specific mailbox. Returns matching messages sorted by date (newest first). Omit query to list recent messages across mailboxes.`,
@@ -355,7 +355,7 @@ type composeParams struct {
 
 func toolCompose() core.Tool {
 	return core.Tool{
-		Name: "apple_mail_compose",
+		Name: "mail_compose",
 		Description: `Compose a new email message.
 
 Creates a new email with the specified recipients and content. By default, the message is opened as a draft for review. Set send=true to send immediately.`,
@@ -442,7 +442,7 @@ type replyParams struct {
 
 func toolReply() core.Tool {
 	return core.Tool{
-		Name: "apple_mail_reply",
+		Name: "mail_reply",
 		Description: `Reply to an email message.
 
 Creates a reply to the specified message. Set replyAll=true to reply to all recipients. By default, the reply is opened as a draft for review.`,
@@ -510,10 +510,10 @@ type moveParams struct {
 
 func toolMoveMessage() core.Tool {
 	return core.Tool{
-		Name: "apple_mail_move",
+		Name: "mail_move",
 		Description: `Move an email message to a different mailbox.
 
-Moves the specified message to the destination mailbox. Use mailbox paths from apple_mail_mailboxes (e.g., "iCloud/Archive", "Gmail/Trash").`,
+Moves the specified message to the destination mailbox. Use mailbox paths from mail_mailboxes (e.g., "iCloud/Archive", "Gmail/Trash").`,
 		Parameters: json.RawMessage(`{
   "type": "object",
   "properties": {
@@ -523,7 +523,7 @@ Moves the specified message to the destination mailbox. Use mailbox paths from a
     },
     "destinationMailbox": {
       "type": "string",
-      "description": "Destination mailbox path (e.g., 'iCloud/Archive'). Use apple_mail_mailboxes to find available paths."
+      "description": "Destination mailbox path (e.g., 'iCloud/Archive'). Use mail_mailboxes to find available paths."
     }
   },
   "required": ["messageId", "destinationMailbox"],
@@ -572,7 +572,7 @@ type setStatusParams struct {
 
 func toolSetStatus() core.Tool {
 	return core.Tool{
-		Name: "apple_mail_set_status",
+		Name: "mail_set_status",
 		Description: `Update the status flags of an email message.
 
 Modify read, flagged, or junk status of a message. Only specified fields are changed; omitted fields are left unchanged. At least one status field must be provided.`,

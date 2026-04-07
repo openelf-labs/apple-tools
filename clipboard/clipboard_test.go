@@ -17,7 +17,7 @@ func TestRegister(t *testing.T) {
 		t.Fatalf("expected 2 tools, got %d", len(reg.Tools))
 	}
 
-	for _, name := range []string{"apple_clipboard_read", "apple_clipboard_write"} {
+	for _, name := range []string{"clipboard_read", "clipboard_write"} {
 		tool := reg.FindTool(name)
 		if tool == nil {
 			t.Errorf("tool %q not registered", name)
@@ -33,7 +33,7 @@ func TestWriteValidation(t *testing.T) {
 	reg := &testutil.MockRegistry{}
 	Register(reg)
 
-	_, err := testutil.CallTool(t, reg, "apple_clipboard_write", map[string]any{"text": ""})
+	_, err := testutil.CallTool(t, reg, "clipboard_write", map[string]any{"text": ""})
 	if err == nil {
 		t.Error("expected error for empty text")
 	}
@@ -48,14 +48,14 @@ func TestIntegrationReadWrite(t *testing.T) {
 	Register(reg)
 
 	// Write
-	result, err := testutil.CallTool(t, reg, "apple_clipboard_write", map[string]any{"text": "apple-tools-test"})
+	result, err := testutil.CallTool(t, reg, "clipboard_write", map[string]any{"text": "apple-tools-test"})
 	if err != nil {
 		t.Fatalf("write error: %v", err)
 	}
 	t.Logf("write result: %s", result)
 
 	// Read back
-	result, err = testutil.CallTool(t, reg, "apple_clipboard_read", map[string]any{})
+	result, err = testutil.CallTool(t, reg, "clipboard_read", map[string]any{})
 	if err != nil {
 		t.Fatalf("read error: %v", err)
 	}

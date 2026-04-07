@@ -54,7 +54,7 @@ func IsValidStatus(status string) bool {
 // Register adds all Reminders tools to the given registry.
 func Register(r core.Registry) {
 	r.Add(core.Tool{
-		Name:        "apple_reminders_list",
+		Name: "reminders_list",
 		Description: "List reminders from Apple Reminders. Filters by list, completion status, and due date range.",
 		Parameters: json.RawMessage(`{
   "type": "object",
@@ -71,7 +71,7 @@ func Register(r core.Registry) {
 	})
 
 	r.Add(core.Tool{
-		Name:        "apple_reminders_search",
+		Name: "reminders_search",
 		Description: "Search reminders by title or notes content. Case-insensitive. Omit query to list all reminders.",
 		Parameters: json.RawMessage(`{
   "type": "object",
@@ -85,7 +85,7 @@ func Register(r core.Registry) {
 	})
 
 	r.Add(core.Tool{
-		Name:        "apple_reminders_create",
+		Name: "reminders_create",
 		Description: "Create a new reminder in Apple Reminders.",
 		Parameters: json.RawMessage(`{
   "type": "object",
@@ -103,7 +103,7 @@ func Register(r core.Registry) {
 	})
 
 	r.Add(core.Tool{
-		Name:        "apple_reminders_complete",
+		Name: "reminders_complete",
 		Description: "Mark a reminder as completed. Accepts reminder ID or exact title.",
 		Parameters: json.RawMessage(`{
   "type": "object",
@@ -117,7 +117,7 @@ func Register(r core.Registry) {
 	})
 
 	r.Add(core.Tool{
-		Name:        "apple_reminders_lists",
+		Name: "reminders_lists",
 		Description: "Get all reminder lists from Apple Reminders.",
 		Parameters: json.RawMessage(`{
   "type": "object",

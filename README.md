@@ -37,9 +37,9 @@ Test tools without any host application:
 
 ```bash
 go run ./cmd/apple-tools-demo list
-go run ./cmd/apple-tools-demo call apple_calendar_list '{"limit":3}'
-go run ./cmd/apple-tools-demo call apple_shortcuts_list
-go run ./cmd/apple-tools-demo call apple_system_battery
+go run ./cmd/apple-tools-demo call calendar_list '{"limit":3}'
+go run ./cmd/apple-tools-demo call shortcuts_list
+go run ./cmd/apple-tools-demo call system_battery
 ```
 
 ## Tool Catalog
@@ -67,38 +67,38 @@ All operations are local. No data is sent to any remote server.
 
 | Tool | Reads | Writes | macOS Permission |
 |------|-------|--------|-----------------|
-| apple_calendar_list | Calendar events | — | Automation (Calendar) |
-| apple_calendar_search | Calendar events | — | Automation (Calendar) |
-| apple_calendar_create | — | Calendar events | Automation (Calendar) |
-| apple_calendar_open | — | — | Automation (Calendar) |
-| apple_reminders_list | Reminders | — | Automation (Reminders) |
-| apple_reminders_search | Reminders | — | Automation (Reminders) |
-| apple_reminders_create | — | Reminders | Automation (Reminders) |
-| apple_reminders_complete | — | Reminders | Automation (Reminders) |
-| apple_reminders_lists | Reminder lists | — | Automation (Reminders) |
-| apple_contacts_search | Contacts | — | Automation (Contacts) |
-| apple_contacts_details | Contacts | — | Automation (Contacts) |
-| apple_contacts_find_by_phone | Contacts | — | Automation (Contacts) |
-| apple_notes_list | Notes content | — | Automation (Notes) |
-| apple_notes_search | Notes content | — | Automation (Notes) |
-| apple_notes_create | — | Notes content | Automation (Notes) |
-| apple_mail_* | Email messages | Email drafts | Automation (Mail) |
-| apple_messages_send | — | iMessages | Automation (Messages) |
-| apple_messages_read | Message history | — | Full Disk Access |
-| apple_messages_unread | Message history | — | Full Disk Access |
-| apple_music_* | Music library | Playback state | Automation (Music) |
-| apple_safari_tabs | Open tab URLs | — | Automation (Safari) |
-| apple_safari_get_page | Page content | — | Automation (Safari) |
-| apple_safari_bookmarks | Bookmarks file | — | None (reads plist) |
-| apple_safari_reading_list | Reading list | — | None (reads plist) |
-| apple_shortcuts_list | Shortcut names | — | None |
-| apple_shortcuts_run | — | Depends on shortcut | None (shortcut's own permissions) |
-| apple_system_* | System status | — | None |
-| apple_clipboard_read | Clipboard text | — | None |
-| apple_clipboard_write | — | Clipboard text | None |
-| apple_notification_send | — | Notification | None |
-| apple_finder_reveal | — | — | None |
-| apple_spotlight_search | File metadata | — | None |
+| calendar_list | Calendar events | — | Automation (Calendar) |
+| calendar_search | Calendar events | — | Automation (Calendar) |
+| calendar_create | — | Calendar events | Automation (Calendar) |
+| calendar_open | — | — | Automation (Calendar) |
+| reminders_list | Reminders | — | Automation (Reminders) |
+| reminders_search | Reminders | — | Automation (Reminders) |
+| reminders_create | — | Reminders | Automation (Reminders) |
+| reminders_complete | — | Reminders | Automation (Reminders) |
+| reminders_lists | Reminder lists | — | Automation (Reminders) |
+| contacts_search | Contacts | — | Automation (Contacts) |
+| contacts_details | Contacts | — | Automation (Contacts) |
+| contacts_find_by_phone | Contacts | — | Automation (Contacts) |
+| notes_list | Notes content | — | Automation (Notes) |
+| notes_search | Notes content | — | Automation (Notes) |
+| notes_create | — | Notes content | Automation (Notes) |
+| mail_* | Email messages | Email drafts | Automation (Mail) |
+| messages_send | — | iMessages | Automation (Messages) |
+| messages_read | Message history | — | Full Disk Access |
+| messages_unread | Message history | — | Full Disk Access |
+| music_* | Music library | Playback state | Automation (Music) |
+| safari_tabs | Open tab URLs | — | Automation (Safari) |
+| safari_get_page | Page content | — | Automation (Safari) |
+| safari_bookmarks | Bookmarks file | — | None (reads plist) |
+| safari_reading_list | Reading list | — | None (reads plist) |
+| shortcuts_list | Shortcut names | — | None |
+| shortcuts_run | — | Depends on shortcut | None (shortcut's own permissions) |
+| system_* | System status | — | None |
+| clipboard_read | Clipboard text | — | None |
+| clipboard_write | — | Clipboard text | None |
+| notification_send | — | Notification | None |
+| finder_reveal | — | — | None |
+| spotlight_search | File metadata | — | None |
 
 ## Configuration
 

@@ -31,26 +31,26 @@ var (
 
 func Register(r core.Registry) {
 	r.Add(core.Tool{
-		Name:        "apple_safari_tabs",
-		Description: "List all open tabs in Safari across all windows. Returns JSON array of {windowIndex, tabIndex, title, url}. Use tabIndex with apple_safari_get_page.",
+		Name: "safari_tabs",
+		Description: "List all open tabs in Safari across all windows. Returns JSON array of {windowIndex, tabIndex, title, url}. Use tabIndex with safari_get_page.",
 		Parameters:  json.RawMessage(`{"type":"object","properties":{}}`),
 		Handler:     handleListTabs,
 	})
 
 	r.Add(core.Tool{
-		Name:        "apple_safari_get_page",
-		Description: "Get the URL, title, and HTML source of a Safari tab. Returns JSON {title, url, source}. Defaults to current tab; use tabIndex from apple_safari_tabs to specify.",
+		Name: "safari_get_page",
+		Description: "Get the URL, title, and HTML source of a Safari tab. Returns JSON {title, url, source}. Defaults to current tab; use tabIndex from safari_tabs to specify.",
 		Parameters: json.RawMessage(`{
 			"type":"object",
 			"properties":{
-				"tabIndex":{"type":"integer","description":"Tab index from apple_safari_tabs output. Omit for current tab."}
+				"tabIndex":{"type":"integer","description":"Tab index from safari_tabs output. Omit for current tab."}
 			}
 		}`),
 		Handler: handleGetPage,
 	})
 
 	r.Add(core.Tool{
-		Name:        "apple_safari_bookmarks",
+		Name: "safari_bookmarks",
 		Description: "List Safari bookmarks. Returns JSON array of {title, url, folder}.",
 		Parameters: json.RawMessage(`{
 			"type":"object",
@@ -62,7 +62,7 @@ func Register(r core.Registry) {
 	})
 
 	r.Add(core.Tool{
-		Name:        "apple_safari_reading_list",
+		Name: "safari_reading_list",
 		Description: "List items in Safari's Reading List. Returns JSON array of {title, url, preview, dateAdded}.",
 		Parameters: json.RawMessage(`{
 			"type":"object",

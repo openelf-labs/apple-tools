@@ -62,10 +62,10 @@ Usage:
 
 Examples:
   apple-tools-demo list
-  apple-tools-demo call apple_calendar_list
-  apple-tools-demo call apple_calendar_list '{"limit":3}'
-  apple-tools-demo call apple_shortcuts_list
-  apple-tools-demo call apple_system_battery
+  apple-tools-demo call calendar_list
+  apple-tools-demo call calendar_list '{"limit":3}'
+  apple-tools-demo call shortcuts_list
+  apple-tools-demo call system_battery
 `)
 }
 
@@ -73,7 +73,7 @@ func listTools(reg *testutil.MockRegistry) {
 	// Group by category
 	categories := map[string][]core.Tool{}
 	for _, t := range reg.Tools {
-		parts := strings.SplitN(strings.TrimPrefix(t.Name, "apple_"), "_", 2)
+		parts := strings.SplitN(t.Name, "_", 2)
 		cat := parts[0]
 		categories[cat] = append(categories[cat], t)
 	}

@@ -17,7 +17,7 @@ func TestRegister(t *testing.T) {
 		t.Fatalf("expected 1 tool, got %d", len(reg.Tools))
 	}
 
-	tool := reg.FindTool("apple_notification_send")
+	tool := reg.FindTool("notification_send")
 	if tool == nil {
 		t.Fatal("tool not registered")
 	}
@@ -41,7 +41,7 @@ func TestSendValidation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := testutil.CallTool(t, reg, "apple_notification_send", tt.params)
+			_, err := testutil.CallTool(t, reg, "notification_send", tt.params)
 			if err == nil {
 				t.Error("expected validation error")
 			}

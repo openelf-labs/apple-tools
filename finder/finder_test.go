@@ -24,8 +24,8 @@ func TestRegister(t *testing.T) {
 		t.Fatalf("expected 1 tool, got %d", got)
 	}
 
-	if reg.Tools[0].Name != "apple_finder_reveal" {
-		t.Errorf("expected tool name %q, got %q", "apple_finder_reveal", reg.Tools[0].Name)
+	if reg.Tools[0].Name != "finder_reveal" {
+		t.Errorf("expected tool name %q, got %q", "finder_reveal", reg.Tools[0].Name)
 	}
 }
 
@@ -48,7 +48,7 @@ func TestRegister_ToolHasSchema(t *testing.T) {
 
 func TestReveal_EmptyPath(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_finder_reveal", map[string]any{
+	_, err := testutil.CallTool(t, reg, "finder_reveal", map[string]any{
 		"path": "",
 	})
 	if err == nil {
@@ -61,7 +61,7 @@ func TestReveal_EmptyPath(t *testing.T) {
 
 func TestReveal_MissingPath(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_finder_reveal", map[string]any{})
+	_, err := testutil.CallTool(t, reg, "finder_reveal", map[string]any{})
 	if err == nil {
 		t.Fatal("expected error for missing path")
 	}
@@ -72,7 +72,7 @@ func TestReveal_MissingPath(t *testing.T) {
 
 func TestReveal_RelativePath(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_finder_reveal", map[string]any{
+	_, err := testutil.CallTool(t, reg, "finder_reveal", map[string]any{
 		"path": "Documents/file.txt",
 	})
 	if err == nil {
@@ -95,7 +95,7 @@ func TestReveal_PathTraversal(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			reg := newRegistry()
-			_, err := testutil.CallTool(t, reg, "apple_finder_reveal", map[string]any{
+			_, err := testutil.CallTool(t, reg, "finder_reveal", map[string]any{
 				"path": tt.path,
 			})
 			if err == nil {
@@ -110,7 +110,7 @@ func TestReveal_PathTraversal(t *testing.T) {
 
 func TestReveal_WhitespacePath(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_finder_reveal", map[string]any{
+	_, err := testutil.CallTool(t, reg, "finder_reveal", map[string]any{
 		"path": "   ",
 	})
 	if err == nil {
@@ -129,7 +129,7 @@ func TestReveal_Integration(t *testing.T) {
 	}
 
 	reg := newRegistry()
-	result, err := testutil.CallTool(t, reg, "apple_finder_reveal", map[string]any{
+	result, err := testutil.CallTool(t, reg, "finder_reveal", map[string]any{
 		"path": "/Applications",
 	})
 	if err != nil {

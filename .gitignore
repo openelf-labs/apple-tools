@@ -5,7 +5,8 @@
 *.so
 *.dylib
 apple-tools-demo
-openelf-apple
+/apple-tools
+build/
 
 # Test binary, built with `go test -c`
 *.test

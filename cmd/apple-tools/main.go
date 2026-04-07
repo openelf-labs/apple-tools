@@ -407,8 +407,7 @@ func categoryEnabledMap(cfg appletools.Config) map[string]bool {
 }
 
 func extractCategory(toolName string) string {
-	name := strings.TrimPrefix(toolName, "apple_")
-	parts := strings.SplitN(name, "_", 2)
+	parts := strings.SplitN(toolName, "_", 2)
 	if len(parts) > 0 {
 		return parts[0]
 	}

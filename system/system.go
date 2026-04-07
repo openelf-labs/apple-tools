@@ -13,14 +13,14 @@ import (
 
 func Register(r core.Registry) {
 	r.Add(core.Tool{
-		Name:        "apple_system_battery",
+		Name: "system_battery",
 		Description: "Get battery status. Returns JSON {source, percentage, charging, available, raw}.",
 		Parameters:  json.RawMessage(`{"type":"object","properties":{}}`),
 		Handler:     handleBattery,
 	})
 
 	r.Add(core.Tool{
-		Name:        "apple_system_disk",
+		Name: "system_disk",
 		Description: "Get disk usage for a path. Returns JSON {path, filesystem, size, used, available, capacity}.",
 		Parameters: json.RawMessage(`{
 			"type":"object",
@@ -32,7 +32,7 @@ func Register(r core.Registry) {
 	})
 
 	r.Add(core.Tool{
-		Name:        "apple_system_network",
+		Name: "system_network",
 		Description: "Get network status. Returns JSON {wifi, interfaces: [{name, ip}], dns}.",
 		Parameters:  json.RawMessage(`{"type":"object","properties":{}}`),
 		Handler:     handleNetwork,

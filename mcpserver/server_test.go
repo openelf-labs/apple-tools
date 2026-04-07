@@ -5,7 +5,9 @@ package mcpserver
 import (
 	"encoding/json"
 	"errors"
+	"os"
 	"testing"
+	"time"
 
 	appletools "github.com/openelf-labs/apple-tools"
 	"github.com/openelf-labs/apple-tools/core"
@@ -78,12 +80,11 @@ func TestExtractCategory(t *testing.T) {
 		toolName string
 		want     string
 	}{
-		{"apple_calendar_list", "calendar"},
-		{"apple_system_battery", "system"},
-		{"apple_messages_send", "messages"},
-		{"apple_music_now_playing", "music"},
+		{"calendar_list", "calendar"},
+		{"system_battery", "system"},
+		{"messages_send", "messages"},
+		{"music_now_playing", "music"},
 		{"unknown", "unknown"},
-		{"apple_", ""},
 	}
 
 	for _, tt := range tests {
@@ -98,7 +99,7 @@ func TestExtractCategory(t *testing.T) {
 
 func TestWrapError_PermissionDenied(t *testing.T) {
 	err := core.NewPermissionError("Calendar", "Automation")
-	result := wrapError(err, "apple_calendar_list")
+	result := wrapError(err, "calendar_list")
 
 	if !result.IsError {
 		t.Error("expected IsError=true for permission denied")
@@ -129,7 +130,7 @@ func TestWrapError_PermissionDenied(t *testing.T) {
 
 func TestWrapError_GenericError(t *testing.T) {
 	err := errors.New("something went wrong")
-	result := wrapError(err, "apple_system_battery")
+	result := wrapError(err, "system_battery")
 
 	if !result.IsError {
 		t.Error("expected IsError=true")
@@ -171,5 +172,46 @@ func TestBuildPermissionGuidance_UnknownCategory(t *testing.T) {
 
 	if g.Permission != "unknown" {
 		t.Errorf("permission = %q, want %q", g.Permission, "unknown")
+	}
+}
+
+func TestPermissionWaitTimeout_Value(t *testing.T) {
+	// Ensure the timeout is reasonable (10-30 seconds range).
+	if permissionWaitTimeout < 10*time.Second || permissionWaitTimeout > 30*time.Second {
+		t.Errorf("permissionWaitTimeout = %v, want between 10s and 30s", permissionWaitTimeout)
+	}
+}
+
+func TestShouldAutoWaitForPermission_DefaultDisabled(t *testing.T) {
+	t.Setenv("APPLE_AUTO_WAIT_FOR_PERMISSION", "")
+	if shouldAutoWaitForPermission() {
+		t.Error("expected auto wait to be disabled by default")
+	}
+}
+
+func TestShouldAutoWaitForPermission_Enabled(t *testing.T) {
+	t.Setenv("APPLE_AUTO_WAIT_FOR_PERMISSION", "true")
+	if !shouldAutoWaitForPermission() {
+		t.Error("expected auto wait to be enabled")
+	}
+}
+
+func TestEnvBool(t *testing.T) {
+	key := "TEST_APPLE_TOOLS_BOOL"
+	if err := os.Unsetenv(key); err != nil {
+		t.Fatalf("unsetenv: %v", err)
+	}
+	if !envBoolDefault(key, true) {
+		t.Error("expected default true when unset")
+	}
+
+	t.Setenv(key, "off")
+	if envBoolDefault(key, true) {
+		t.Error("expected off to parse as false")
+	}
+
+	t.Setenv(key, "1")
+	if !envBoolDefault(key, false) {
+		t.Error("expected 1 to parse as true")
 	}
 }

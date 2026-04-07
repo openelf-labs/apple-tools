@@ -13,15 +13,15 @@ import (
 
 func Register(r core.Registry) {
 	r.Add(core.Tool{
-		Name:        "apple_shortcuts_list",
-		Description: "List all available Apple Shortcuts on this Mac. Returns JSON array of shortcut names. Use these names with apple_shortcuts_run.",
+		Name: "shortcuts_list",
+		Description: "List all available Apple Shortcuts on this Mac. Returns JSON array of shortcut names. Use these names with shortcuts_run.",
 		Parameters:  json.RawMessage(`{"type":"object","properties":{}}`),
 		Handler:     handleList,
 	})
 
 	r.Add(core.Tool{
-		Name:        "apple_shortcuts_run",
-		Description: "Run an Apple Shortcut by name. Returns JSON {ok, name, output}. Use apple_shortcuts_list to discover available shortcuts.",
+		Name: "shortcuts_run",
+		Description: "Run an Apple Shortcut by name. Returns JSON {ok, name, output}. Use shortcuts_list to discover available shortcuts.",
 		Parameters: json.RawMessage(`{
 			"type":"object",
 			"properties":{

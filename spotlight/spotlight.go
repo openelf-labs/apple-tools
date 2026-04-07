@@ -14,7 +14,7 @@ import (
 // Register adds the Spotlight search tool to the registry.
 func Register(r core.Registry) {
 	r.Add(core.Tool{
-		Name:        "apple_spotlight_search",
+		Name: "spotlight_search",
 		Description: "Search for files on macOS using Spotlight (mdfind). Supports content queries, scoped directory search, and content type filtering (e.g. com.adobe.pdf, public.image).",
 		Parameters: json.RawMessage(`{
 			"type": "object",

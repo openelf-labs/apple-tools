@@ -24,8 +24,8 @@ func TestRegister(t *testing.T) {
 		t.Fatalf("expected 1 tool, got %d", len(reg.Tools))
 	}
 
-	if reg.Tools[0].Name != "apple_spotlight_search" {
-		t.Errorf("tool name = %q, want %q", reg.Tools[0].Name, "apple_spotlight_search")
+	if reg.Tools[0].Name != "spotlight_search" {
+		t.Errorf("tool name = %q, want %q", reg.Tools[0].Name, "spotlight_search")
 	}
 
 	if !json.Valid(reg.Tools[0].Parameters) {
@@ -36,7 +36,7 @@ func TestRegister(t *testing.T) {
 func TestSearch_EmptyQuery(t *testing.T) {
 	reg := newRegistry()
 
-	_, err := testutil.CallTool(t, reg, "apple_spotlight_search", map[string]any{
+	_, err := testutil.CallTool(t, reg, "spotlight_search", map[string]any{
 		"query": "",
 	})
 	if err == nil {
@@ -50,7 +50,7 @@ func TestSearch_EmptyQuery(t *testing.T) {
 func TestSearch_WhitespaceQuery(t *testing.T) {
 	reg := newRegistry()
 
-	_, err := testutil.CallTool(t, reg, "apple_spotlight_search", map[string]any{
+	_, err := testutil.CallTool(t, reg, "spotlight_search", map[string]any{
 		"query": "   ",
 	})
 	if err == nil {
@@ -70,7 +70,7 @@ func TestSearch_PathTraversal(t *testing.T) {
 		"/home/user/../../root",
 	}
 	for _, dir := range cases {
-		_, err := testutil.CallTool(t, reg, "apple_spotlight_search", map[string]any{
+		_, err := testutil.CallTool(t, reg, "spotlight_search", map[string]any{
 			"query":     "test",
 			"directory": dir,
 		})
@@ -92,7 +92,7 @@ func TestSearch_Integration(t *testing.T) {
 	reg := newRegistry()
 
 	// Search for Go files — there should be at least one on any dev machine.
-	result, err := testutil.CallTool(t, reg, "apple_spotlight_search", map[string]any{
+	result, err := testutil.CallTool(t, reg, "spotlight_search", map[string]any{
 		"query": "kMDItemFSName == '*.go'",
 		"limit": 5,
 	})

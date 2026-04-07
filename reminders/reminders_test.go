@@ -31,11 +31,11 @@ func TestRegister_ToolCount(t *testing.T) {
 func TestRegister_ToolNames(t *testing.T) {
 	reg := newRegistry()
 	expected := []string{
-		"apple_reminders_list",
-		"apple_reminders_search",
-		"apple_reminders_create",
-		"apple_reminders_complete",
-		"apple_reminders_lists",
+		"reminders_list",
+		"reminders_search",
+		"reminders_create",
+		"reminders_complete",
+		"reminders_lists",
 	}
 
 	names := reg.ToolNames()
@@ -83,7 +83,7 @@ func TestRegister_ToolsHaveDescriptions(t *testing.T) {
 
 func TestList_InvalidStatus(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_reminders_list", map[string]any{
+	_, err := testutil.CallTool(t, reg, "reminders_list", map[string]any{
 		"status": "bogus",
 	})
 	if err == nil {
@@ -128,7 +128,7 @@ func TestSearch_EmptyQuery(t *testing.T) {
 		{"query": "   "},
 	}
 	for _, params := range cases {
-		_, err := testutil.CallTool(t, reg, "apple_reminders_search", params)
+		_, err := testutil.CallTool(t, reg, "reminders_search", params)
 		// Should not produce ErrInvalidInput; JXA/timeout/permission errors are OK.
 		if errors.Is(err, core.ErrInvalidInput) {
 			t.Errorf("empty query should not produce ErrInvalidInput for params %v, got: %v", params, err)
@@ -145,7 +145,7 @@ func TestCreate_EmptyTitle(t *testing.T) {
 		{"title": "   "},
 	}
 	for _, params := range cases {
-		_, err := testutil.CallTool(t, reg, "apple_reminders_create", params)
+		_, err := testutil.CallTool(t, reg, "reminders_create", params)
 		if err == nil {
 			t.Fatalf("expected error for params %v", params)
 		}
@@ -160,7 +160,7 @@ func TestCreate_InvalidPriority(t *testing.T) {
 
 	for _, prio := range []int{-1, 10, 100} {
 		params := map[string]any{"title": "test", "priority": prio}
-		_, err := testutil.CallTool(t, reg, "apple_reminders_create", params)
+		_, err := testutil.CallTool(t, reg, "reminders_create", params)
 		if err == nil {
 			t.Fatalf("expected error for priority %d", prio)
 		}
@@ -179,7 +179,7 @@ func TestCreate_ValidPriorityZero(t *testing.T) {
 	}
 
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_reminders_create", map[string]any{
+	_, err := testutil.CallTool(t, reg, "reminders_create", map[string]any{
 		"title": "test", "priority": 0,
 	})
 	if errors.Is(err, core.ErrInvalidInput) {
@@ -196,7 +196,7 @@ func TestComplete_EmptyID(t *testing.T) {
 		{"id": "   "},
 	}
 	for _, params := range cases {
-		_, err := testutil.CallTool(t, reg, "apple_reminders_complete", params)
+		_, err := testutil.CallTool(t, reg, "reminders_complete", params)
 		if err == nil {
 			t.Fatalf("expected error for params %v", params)
 		}
@@ -208,7 +208,7 @@ func TestComplete_EmptyID(t *testing.T) {
 
 func TestList_InvalidJSON(t *testing.T) {
 	reg := newRegistry()
-	tool := reg.FindTool("apple_reminders_list")
+	tool := reg.FindTool("reminders_list")
 	if tool == nil {
 		t.Fatal("tool not found")
 	}
@@ -229,7 +229,7 @@ func TestIntegration_GetLists(t *testing.T) {
 	}
 
 	reg := newRegistry()
-	result, err := testutil.CallTool(t, reg, "apple_reminders_lists", map[string]any{})
+	result, err := testutil.CallTool(t, reg, "reminders_lists", map[string]any{})
 	if err != nil {
 		// Permission errors are expected on CI or sandboxed environments.
 		if errors.Is(err, core.ErrPermissionDenied) ||

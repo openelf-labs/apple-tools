@@ -26,9 +26,9 @@ func TestRegister(t *testing.T) {
 	}
 
 	expected := []string{
-		"apple_notes_list",
-		"apple_notes_search",
-		"apple_notes_create",
+		"notes_list",
+		"notes_search",
+		"notes_create",
 	}
 	names := reg.ToolNames()
 	sort.Strings(names)
@@ -71,7 +71,7 @@ func TestSearch_EmptyQuery(t *testing.T) {
 		{"query": "   "},
 	}
 	for _, params := range cases {
-		_, err := testutil.CallTool(t, reg, "apple_notes_search", params)
+		_, err := testutil.CallTool(t, reg, "notes_search", params)
 		// Should not produce ErrInvalidInput; JXA/timeout/permission errors are OK.
 		if errors.Is(err, core.ErrInvalidInput) {
 			t.Errorf("empty query should not produce ErrInvalidInput, params=%v, got: %v", params, err)
@@ -81,7 +81,7 @@ func TestSearch_EmptyQuery(t *testing.T) {
 
 func TestCreate_EmptyTitle(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_notes_create", map[string]any{
+	_, err := testutil.CallTool(t, reg, "notes_create", map[string]any{
 		"title": "",
 		"body":  "some content",
 	})
@@ -95,7 +95,7 @@ func TestCreate_EmptyTitle(t *testing.T) {
 
 func TestCreate_MissingTitle(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_notes_create", map[string]any{
+	_, err := testutil.CallTool(t, reg, "notes_create", map[string]any{
 		"body": "some content",
 	})
 	if err == nil {
@@ -108,7 +108,7 @@ func TestCreate_MissingTitle(t *testing.T) {
 
 func TestCreate_EmptyBody(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_notes_create", map[string]any{
+	_, err := testutil.CallTool(t, reg, "notes_create", map[string]any{
 		"title": "Test Note",
 		"body":  "",
 	})
@@ -122,7 +122,7 @@ func TestCreate_EmptyBody(t *testing.T) {
 
 func TestCreate_MissingBody(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_notes_create", map[string]any{
+	_, err := testutil.CallTool(t, reg, "notes_create", map[string]any{
 		"title": "Test Note",
 	})
 	if err == nil {
@@ -163,7 +163,7 @@ func TestList_Integration(t *testing.T) {
 	}
 
 	reg := newRegistry()
-	result, err := testutil.CallTool(t, reg, "apple_notes_list", map[string]any{
+	result, err := testutil.CallTool(t, reg, "notes_list", map[string]any{
 		"limit": 1,
 	})
 	if err != nil {

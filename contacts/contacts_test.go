@@ -24,9 +24,9 @@ func TestRegister(t *testing.T) {
 	}
 
 	expected := []string{
-		"apple_contacts_search",
-		"apple_contacts_details",
-		"apple_contacts_find_by_phone",
+		"contacts_search",
+		"contacts_details",
+		"contacts_find_by_phone",
 	}
 	names := reg.ToolNames()
 	for i, want := range expected {
@@ -57,7 +57,7 @@ func TestSearch_EmptyQuery(t *testing.T) {
 		{},
 	}
 	for _, params := range cases {
-		_, err := testutil.CallTool(t, reg, "apple_contacts_search", params)
+		_, err := testutil.CallTool(t, reg, "contacts_search", params)
 		// Should not produce ErrInvalidInput; JXA/timeout/permission errors are OK.
 		if errors.Is(err, core.ErrInvalidInput) {
 			t.Errorf("empty query should not produce ErrInvalidInput, params=%v, got: %v", params, err)
@@ -68,7 +68,7 @@ func TestSearch_EmptyQuery(t *testing.T) {
 func TestDetails_EmptyName(t *testing.T) {
 	reg := newRegistry()
 
-	_, err := testutil.CallTool(t, reg, "apple_contacts_details", map[string]any{
+	_, err := testutil.CallTool(t, reg, "contacts_details", map[string]any{
 		"name": "",
 	})
 	if err == nil {
@@ -82,7 +82,7 @@ func TestDetails_EmptyName(t *testing.T) {
 func TestFindByPhone_EmptyNumber(t *testing.T) {
 	reg := newRegistry()
 
-	_, err := testutil.CallTool(t, reg, "apple_contacts_find_by_phone", map[string]any{
+	_, err := testutil.CallTool(t, reg, "contacts_find_by_phone", map[string]any{
 		"phoneNumber": "",
 	})
 	if err == nil {
@@ -102,7 +102,7 @@ func TestFindByPhone_InvalidFormat(t *testing.T) {
 		"not-a-phone-number-at-all-way-too-long",
 	}
 	for _, phone := range cases {
-		_, err := testutil.CallTool(t, reg, "apple_contacts_find_by_phone", map[string]any{
+		_, err := testutil.CallTool(t, reg, "contacts_find_by_phone", map[string]any{
 			"phoneNumber": phone,
 		})
 		if err == nil {
@@ -123,7 +123,7 @@ func TestSearch_Integration(t *testing.T) {
 	reg := newRegistry()
 
 	// Search for an unlikely name to verify JXA executes without error.
-	result, err := testutil.CallTool(t, reg, "apple_contacts_search", map[string]any{
+	result, err := testutil.CallTool(t, reg, "contacts_search", map[string]any{
 		"query": "zzzzznotarealcontact99999",
 	})
 	if err != nil {

@@ -27,14 +27,14 @@ func mustLoad(name string) []byte {
 
 func Register(r core.Registry) {
 	r.Add(core.Tool{
-		Name:        "apple_clipboard_read",
+		Name: "clipboard_read",
 		Description: "Read clipboard content. Returns JSON {text, hasImage, imageFormat}.",
 		Parameters:  json.RawMessage(`{"type":"object","properties":{}}`),
 		Handler:     handleRead,
 	})
 
 	r.Add(core.Tool{
-		Name:        "apple_clipboard_write",
+		Name: "clipboard_write",
 		Description: "Write text to the system clipboard. Returns JSON {ok, length}.",
 		Parameters: json.RawMessage(`{
 			"type":"object",

@@ -17,7 +17,7 @@ func TestRegister(t *testing.T) {
 		t.Fatalf("expected 2 tools, got %d", len(reg.Tools))
 	}
 
-	for _, name := range []string{"apple_shortcuts_list", "apple_shortcuts_run"} {
+	for _, name := range []string{"shortcuts_list", "shortcuts_run"} {
 		tool := reg.FindTool(name)
 		if tool == nil {
 			t.Errorf("tool %q not registered", name)
@@ -34,13 +34,13 @@ func TestRunValidation(t *testing.T) {
 	Register(reg)
 
 	// Empty name should fail
-	_, err := testutil.CallTool(t, reg, "apple_shortcuts_run", map[string]any{"name": ""})
+	_, err := testutil.CallTool(t, reg, "shortcuts_run", map[string]any{"name": ""})
 	if err == nil {
 		t.Error("expected error for empty shortcut name")
 	}
 
 	// Whitespace-only name should fail
-	_, err = testutil.CallTool(t, reg, "apple_shortcuts_run", map[string]any{"name": "   "})
+	_, err = testutil.CallTool(t, reg, "shortcuts_run", map[string]any{"name": "   "})
 	if err == nil {
 		t.Error("expected error for whitespace-only name")
 	}
@@ -54,7 +54,7 @@ func TestIntegrationList(t *testing.T) {
 	reg := &testutil.MockRegistry{}
 	Register(reg)
 
-	result, err := testutil.CallTool(t, reg, "apple_shortcuts_list", map[string]any{})
+	result, err := testutil.CallTool(t, reg, "shortcuts_list", map[string]any{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

@@ -27,7 +27,7 @@ func mustLoad(name string) []byte {
 
 func Register(r core.Registry) {
 	r.Add(core.Tool{
-		Name:        "apple_notification_send",
+		Name: "notification_send",
 		Description: "Send a macOS system notification. Returns JSON {ok, title, message}. Useful for alerting the user when a long-running task completes.",
 		Parameters: json.RawMessage(`{
 			"type":"object",

@@ -13,7 +13,7 @@ func TestRegister(t *testing.T) {
 	reg := &testutil.MockRegistry{}
 	Register(reg)
 
-	expected := []string{"apple_system_battery", "apple_system_disk", "apple_system_network"}
+	expected := []string{"system_battery", "system_disk", "system_network"}
 	if len(reg.Tools) != len(expected) {
 		t.Fatalf("expected %d tools, got %d", len(expected), len(reg.Tools))
 	}
@@ -32,7 +32,7 @@ func TestDiskPathTraversal(t *testing.T) {
 	reg := &testutil.MockRegistry{}
 	Register(reg)
 
-	_, err := testutil.CallTool(t, reg, "apple_system_disk", map[string]any{"path": "/tmp/../etc/passwd"})
+	_, err := testutil.CallTool(t, reg, "system_disk", map[string]any{"path": "/tmp/../etc/passwd"})
 	if err == nil {
 		t.Error("expected error for path traversal")
 	}
@@ -45,7 +45,7 @@ func TestIntegrationBattery(t *testing.T) {
 	reg := &testutil.MockRegistry{}
 	Register(reg)
 
-	result, err := testutil.CallTool(t, reg, "apple_system_battery", map[string]any{})
+	result, err := testutil.CallTool(t, reg, "system_battery", map[string]any{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -69,7 +69,7 @@ func TestIntegrationDisk(t *testing.T) {
 	reg := &testutil.MockRegistry{}
 	Register(reg)
 
-	result, err := testutil.CallTool(t, reg, "apple_system_disk", map[string]any{})
+	result, err := testutil.CallTool(t, reg, "system_disk", map[string]any{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -91,7 +91,7 @@ func TestIntegrationNetwork(t *testing.T) {
 	reg := &testutil.MockRegistry{}
 	Register(reg)
 
-	result, err := testutil.CallTool(t, reg, "apple_system_network", map[string]any{})
+	result, err := testutil.CallTool(t, reg, "system_network", map[string]any{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

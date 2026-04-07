@@ -13,7 +13,7 @@ git clone https://github.com/openelf-labs/apple-tools.git
 cd apple-tools
 go test ./...                                          # Run all tests
 go run ./cmd/apple-tools-demo list                     # List all tools
-go run ./cmd/apple-tools-demo call apple_system_battery # Test a tool
+go run ./cmd/apple-tools-demo call system_battery      # Test a tool
 ```
 
 You do NOT need OpenELF installed. apple-tools is fully standalone.
@@ -65,7 +65,7 @@ var scripts embed.FS
 
 func Register(r core.Registry) {
     r.Add(core.Tool{
-        Name:        "apple_category_action",
+        Name:        "category_action",
         Description: "Clear description for the LLM. Include what it does and what it returns.",
         Parameters:  json.RawMessage(`{
             "type":"object",
@@ -128,7 +128,7 @@ func TestRegister(t *testing.T) {
 func TestValidation(t *testing.T) {
     reg := &testutil.MockRegistry{}
     Register(reg)
-    _, err := testutil.CallTool(t, reg, "apple_category_action", map[string]any{"param1": ""})
+    _, err := testutil.CallTool(t, reg, "category_action", map[string]any{"param1": ""})
     if err == nil {
         t.Error("expected validation error")
     }
@@ -149,7 +149,7 @@ Add your tool to the Data Access Declaration table in README.md.
 
 ## Naming Conventions
 
-- Tool names: `apple_{category}_{action}` (e.g., `apple_calendar_list`)
+- Tool names: `{category}_{action}` (e.g., `calendar_list`)
 - JXA scripts: `{action}.js` (e.g., `list_events.js`)
 - Go packages: lowercase category name
 

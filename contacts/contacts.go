@@ -37,7 +37,7 @@ var phonePattern = regexp.MustCompile(`^\+?[\d\s\-().]{3,20}$`)
 // Register adds all Contacts tools to the registry.
 func Register(r core.Registry) {
 	r.Add(core.Tool{
-		Name:        "apple_contacts_search",
+		Name: "contacts_search",
 		Description: "Search contacts in macOS Contacts app by name. Omit query to list all contacts. Returns matching contacts with name, phone numbers, emails, organization, and job title.",
 		Parameters: json.RawMessage(`{
 			"type": "object",
@@ -58,7 +58,7 @@ func Register(r core.Registry) {
 	})
 
 	r.Add(core.Tool{
-		Name:        "apple_contacts_details",
+		Name: "contacts_details",
 		Description: "Get detailed information for a contact by exact name. Returns full contact details including phones, emails, addresses, organization, job title, birthday, and notes.",
 		Parameters: json.RawMessage(`{
 			"type": "object",
@@ -75,7 +75,7 @@ func Register(r core.Registry) {
 	})
 
 	r.Add(core.Tool{
-		Name:        "apple_contacts_find_by_phone",
+		Name: "contacts_find_by_phone",
 		Description: "Find a contact by phone number. Normalizes the number and tries multiple variants (with/without country code) to find a match.",
 		Parameters: json.RawMessage(`{
 			"type": "object",

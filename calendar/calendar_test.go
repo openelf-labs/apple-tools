@@ -26,10 +26,10 @@ func TestRegister(t *testing.T) {
 	}
 
 	expected := []string{
-		"apple_calendar_list",
-		"apple_calendar_search",
-		"apple_calendar_create",
-		"apple_calendar_open",
+		"calendar_list",
+		"calendar_search",
+		"calendar_create",
+		"calendar_open",
 	}
 	names := reg.ToolNames()
 	sort.Strings(names)
@@ -60,7 +60,7 @@ func TestRegister_ToolsHaveSchemas(t *testing.T) {
 
 func TestListEvents_InvalidFromDate(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_calendar_list", map[string]any{
+	_, err := testutil.CallTool(t, reg, "calendar_list", map[string]any{
 		"from": "not-a-date",
 	})
 	if err == nil {
@@ -73,7 +73,7 @@ func TestListEvents_InvalidFromDate(t *testing.T) {
 
 func TestListEvents_InvalidToDate(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_calendar_list", map[string]any{
+	_, err := testutil.CallTool(t, reg, "calendar_list", map[string]any{
 		"to": "2025-13-45",
 	})
 	if err == nil {
@@ -97,7 +97,7 @@ func TestSearchEvents_EmptyQuery(t *testing.T) {
 		{},
 	}
 	for _, params := range cases {
-		_, err := testutil.CallTool(t, reg, "apple_calendar_search", params)
+		_, err := testutil.CallTool(t, reg, "calendar_search", params)
 		// Should not produce ErrInvalidInput; JXA/timeout/permission errors are OK.
 		if errors.Is(err, core.ErrInvalidInput) {
 			t.Errorf("empty query should not produce ErrInvalidInput, params=%v, got: %v", params, err)
@@ -107,7 +107,7 @@ func TestSearchEvents_EmptyQuery(t *testing.T) {
 
 func TestSearchEvents_InvalidFromDate(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_calendar_search", map[string]any{
+	_, err := testutil.CallTool(t, reg, "calendar_search", map[string]any{
 		"query": "test",
 		"from":  "bad-date",
 	})
@@ -121,7 +121,7 @@ func TestSearchEvents_InvalidFromDate(t *testing.T) {
 
 func TestCreateEvent_EmptyTitle(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_calendar_create", map[string]any{
+	_, err := testutil.CallTool(t, reg, "calendar_create", map[string]any{
 		"title": "",
 		"start": "2025-06-15T14:00:00Z",
 	})
@@ -135,7 +135,7 @@ func TestCreateEvent_EmptyTitle(t *testing.T) {
 
 func TestCreateEvent_MissingTitle(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_calendar_create", map[string]any{
+	_, err := testutil.CallTool(t, reg, "calendar_create", map[string]any{
 		"start": "2025-06-15T14:00:00Z",
 	})
 	if err == nil {
@@ -148,7 +148,7 @@ func TestCreateEvent_MissingTitle(t *testing.T) {
 
 func TestCreateEvent_MissingStart(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_calendar_create", map[string]any{
+	_, err := testutil.CallTool(t, reg, "calendar_create", map[string]any{
 		"title": "Test Event",
 	})
 	if err == nil {
@@ -161,7 +161,7 @@ func TestCreateEvent_MissingStart(t *testing.T) {
 
 func TestCreateEvent_InvalidStartDate(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_calendar_create", map[string]any{
+	_, err := testutil.CallTool(t, reg, "calendar_create", map[string]any{
 		"title": "Test Event",
 		"start": "next tuesday",
 	})
@@ -175,7 +175,7 @@ func TestCreateEvent_InvalidStartDate(t *testing.T) {
 
 func TestCreateEvent_InvalidEndDate(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_calendar_create", map[string]any{
+	_, err := testutil.CallTool(t, reg, "calendar_create", map[string]any{
 		"title": "Test Event",
 		"start": "2025-06-15T14:00:00Z",
 		"end":   "invalid",
@@ -190,7 +190,7 @@ func TestCreateEvent_InvalidEndDate(t *testing.T) {
 
 func TestOpenEvent_EmptyEventID(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_calendar_open", map[string]any{
+	_, err := testutil.CallTool(t, reg, "calendar_open", map[string]any{
 		"eventId": "",
 	})
 	if err == nil {
@@ -203,7 +203,7 @@ func TestOpenEvent_EmptyEventID(t *testing.T) {
 
 func TestOpenEvent_MissingEventID(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_calendar_open", map[string]any{})
+	_, err := testutil.CallTool(t, reg, "calendar_open", map[string]any{})
 	if err == nil {
 		t.Fatal("expected error for missing eventId")
 	}
@@ -241,7 +241,7 @@ func TestListEvents_Integration(t *testing.T) {
 	}
 
 	reg := newRegistry()
-	result, err := testutil.CallTool(t, reg, "apple_calendar_list", map[string]any{
+	result, err := testutil.CallTool(t, reg, "calendar_list", map[string]any{
 		"limit": 5,
 	})
 	if err != nil {

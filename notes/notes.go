@@ -56,7 +56,7 @@ type noteEntry struct {
 
 func toolList() core.Tool {
 	return core.Tool{
-		Name: "apple_notes_list",
+		Name: "notes_list",
 		Description: `List notes from Apple Notes.
 
 Returns notes sorted by modification date (most recent first). Use the folder parameter to filter by a specific folder name. Each note includes its name, folder, a snippet of the first 200 characters, and timestamps.`,
@@ -108,7 +108,7 @@ type searchParams struct {
 
 func toolSearch() core.Tool {
 	return core.Tool{
-		Name: "apple_notes_search",
+		Name: "notes_search",
 		Description: `Search notes in Apple Notes by text.
 
 Performs a case-insensitive search across note names and body content in all folders. Returns matching notes sorted by modification date. Omit query to list all notes.`,
@@ -170,7 +170,7 @@ type createResult struct {
 
 func toolCreate() core.Tool {
 	return core.Tool{
-		Name: "apple_notes_create",
+		Name: "notes_create",
 		Description: `Create a new note in Apple Notes.
 
 Creates a note with the specified title and body content. If no folder is specified, the note is created in the "OpenELF" folder (created automatically if it doesn't exist).`,

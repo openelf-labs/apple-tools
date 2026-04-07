@@ -4,7 +4,9 @@ package core
 
 import (
 	"context"
+	"sync/atomic"
 	"testing"
+	"time"
 )
 
 func TestCategoryPermissions_Complete(t *testing.T) {
@@ -77,5 +79,51 @@ func TestProbeAll_DisabledCategories(t *testing.T) {
 	}
 	if result["shortcuts"].Status != "no_permission" {
 		t.Errorf("expected no_permission for shortcuts, got %q", result["shortcuts"].Status)
+	}
+}
+
+func TestWaitForPermission_GrantedDuringWait(t *testing.T) {
+	var calls atomic.Int32
+	probeFn := func() bool {
+		n := calls.Add(1)
+		return n >= 2 // grant on second probe
+	}
+	got := waitForPermission(context.Background(), "shortcuts", 10*time.Second, probeFn)
+	if !got {
+		t.Error("expected true when permission granted during wait")
+	}
+	if calls.Load() < 2 {
+		t.Errorf("expected at least 2 probe calls, got %d", calls.Load())
+	}
+}
+
+func TestWaitForPermission_Timeout(t *testing.T) {
+	probeFn := func() bool { return false }
+	start := time.Now()
+	got := waitForPermission(context.Background(), "shortcuts", 3*time.Second, probeFn)
+	elapsed := time.Since(start)
+	if got {
+		t.Error("expected false on timeout")
+	}
+	if elapsed < 3*time.Second {
+		t.Errorf("expected at least 3s elapsed, got %v", elapsed)
+	}
+}
+
+func TestWaitForPermission_ContextCanceled(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	go func() {
+		time.Sleep(500 * time.Millisecond)
+		cancel()
+	}()
+	probeFn := func() bool { return false }
+	start := time.Now()
+	got := waitForPermission(ctx, "shortcuts", 30*time.Second, probeFn)
+	elapsed := time.Since(start)
+	if got {
+		t.Error("expected false on context cancel")
+	}
+	if elapsed > 5*time.Second {
+		t.Errorf("expected fast return on cancel, took %v", elapsed)
 	}
 }

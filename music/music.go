@@ -53,7 +53,7 @@ func Register(r core.Registry) {
 
 func toolNowPlaying() core.Tool {
 	return core.Tool{
-		Name: "apple_music_now_playing",
+		Name: "music_now_playing",
 		Description: `Get information about the currently playing track in Apple Music.
 
 Returns the track name, artist, album, duration (seconds), playback position (seconds), and player state (playing/paused/stopped). Returns a message if Music is not running or no track is playing.`,
@@ -83,7 +83,7 @@ func handleNowPlaying(ctx context.Context, _ json.RawMessage) (string, error) {
 
 func toolPlay() core.Tool {
 	return core.Tool{
-		Name: "apple_music_play",
+		Name: "music_play",
 		Description: `Start or resume playback in Apple Music.
 
 Resumes playback of the current track, or starts playing if stopped.`,
@@ -100,7 +100,7 @@ Resumes playback of the current track, or starts playing if stopped.`,
 
 func toolPause() core.Tool {
 	return core.Tool{
-		Name: "apple_music_pause",
+		Name: "music_pause",
 		Description: `Pause playback in Apple Music.
 
 Pauses the currently playing track.`,
@@ -117,7 +117,7 @@ Pauses the currently playing track.`,
 
 func toolNext() core.Tool {
 	return core.Tool{
-		Name: "apple_music_next",
+		Name: "music_next",
 		Description: `Skip to the next track in Apple Music.
 
 Advances to the next track in the current queue.`,
@@ -134,7 +134,7 @@ Advances to the next track in the current queue.`,
 
 func toolPrevious() core.Tool {
 	return core.Tool{
-		Name: "apple_music_previous",
+		Name: "music_previous",
 		Description: `Go to the previous track in Apple Music.
 
 Returns to the previous track in the current queue.`,
@@ -173,7 +173,7 @@ type searchPlayParams struct {
 
 func toolSearchPlay() core.Tool {
 	return core.Tool{
-		Name: "apple_music_search_play",
+		Name: "music_search_play",
 		Description: `Search Apple Music library and play the first match.
 
 Searches the local Music library by song name, artist, or album (for songs) or by playlist name. Plays the first matching result.`,
@@ -232,7 +232,7 @@ type volumeParams struct {
 
 func toolVolume() core.Tool {
 	return core.Tool{
-		Name: "apple_music_volume",
+		Name: "music_volume",
 		Description: `Set the volume level in Apple Music.
 
 Sets the sound volume to a value between 0 (mute) and 100 (maximum).`,
@@ -286,7 +286,7 @@ type playlistsParams struct {
 
 func toolPlaylists() core.Tool {
 	return core.Tool{
-		Name: "apple_music_playlists",
+		Name: "music_playlists",
 		Description: `List playlists in the Apple Music library.
 
 Returns the names of playlists in the local Music library, up to the specified limit.`,

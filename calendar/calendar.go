@@ -65,7 +65,7 @@ type calendarEvent struct {
 
 func toolListEvents() core.Tool {
 	return core.Tool{
-		Name: "apple_calendar_list",
+		Name: "calendar_list",
 		Description: `List upcoming calendar events within a date range.
 
 Returns events from Apple Calendar sorted by start date. If no date range is specified, returns events for the next 7 days. Use the calendar parameter to filter by a specific calendar name.`,
@@ -138,7 +138,7 @@ type searchParams struct {
 
 func toolSearchEvents() core.Tool {
 	return core.Tool{
-		Name: "apple_calendar_search",
+		Name: "calendar_search",
 		Description: `Search calendar events by title.
 
 Performs a case-insensitive search across all calendars. By default searches events from 30 days ago to 90 days in the future. Use from/to parameters to narrow the search window. Omit query to list events in the date range.`,
@@ -225,7 +225,7 @@ type createResult struct {
 
 func toolCreateEvent() core.Tool {
 	return core.Tool{
-		Name: "apple_calendar_create",
+		Name: "calendar_create",
 		Description: `Create a new event in Apple Calendar.
 
 Creates an event with the specified details. If no calendar is specified, the default calendar is used. If no end time is given, the event defaults to 1 hour duration (or next day for all-day events). You can optionally set an alert that fires N minutes before the event.`,
@@ -321,10 +321,10 @@ type openResult struct {
 
 func toolOpenEvent() core.Tool {
 	return core.Tool{
-		Name: "apple_calendar_open",
+		Name: "calendar_open",
 		Description: `Open a specific event in the Apple Calendar app.
 
-Opens Calendar.app and navigates to the date of the specified event. Use the event ID returned by apple_calendar_list or apple_calendar_search.`,
+Opens Calendar.app and navigates to the date of the specified event. Use the event ID returned by calendar_list or calendar_search.`,
 		Parameters: json.RawMessage(`{
   "type": "object",
   "properties": {

@@ -128,6 +128,39 @@ func ProbeAll(ctx context.Context, enabled map[string]bool) map[string]Permissio
 	return result
 }
 
+// WaitForPermission opens the relevant System Settings pane and polls until
+// the macOS permission for the given category is granted or the timeout expires.
+// After the initial TCC prompt has been answered, subsequent ProbePermission calls
+// do NOT re-trigger the dialog — they read the cached TCC decision. Polling is safe.
+// Returns true if permission was granted within the timeout window.
+func WaitForPermission(ctx context.Context, category string, timeout time.Duration) bool {
+	return waitForPermission(ctx, category, timeout, func() bool {
+		return ProbePermission(ctx, category).Status == "granted"
+	})
+}
+
+// waitForPermission is the testable core: it opens settings and polls probeFn.
+func waitForPermission(ctx context.Context, category string, timeout time.Duration, probeFn func() bool) bool {
+	_ = OpenSystemSettings(category)
+
+	const pollInterval = 2 * time.Second
+	ticker := time.NewTicker(pollInterval)
+	defer ticker.Stop()
+	deadline := time.After(timeout)
+	for {
+		select {
+		case <-ctx.Done():
+			return false
+		case <-deadline:
+			return false
+		case <-ticker.C:
+			if probeFn() {
+				return true
+			}
+		}
+	}
+}
+
 func probeFullDiskAccess() PermissionStatus {
 	home, err := os.UserHomeDir()
 	if err != nil {

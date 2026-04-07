@@ -3,6 +3,7 @@
 package main
 
 import (
+	"strings"
 	"testing"
 
 	appletools "github.com/openelf-labs/apple-tools"
@@ -15,11 +16,11 @@ func TestExtractCategory(t *testing.T) {
 		input string
 		want  string
 	}{
-		{"apple_calendar_list", "calendar"},
-		{"apple_system_battery", "system"},
-		{"apple_music_now_playing", "music"},
-		{"apple_messages_send", "messages"},
-		{"apple_shortcuts_run", "shortcuts"},
+		{"calendar_list", "calendar"},
+		{"system_battery", "system"},
+		{"music_now_playing", "music"},
+		{"messages_send", "messages"},
+		{"shortcuts_run", "shortcuts"},
 	}
 	for _, tt := range tests {
 		got := extractCategory(tt.input)
@@ -38,10 +39,10 @@ func TestListRegistersTools(t *testing.T) {
 		t.Fatal("expected tools to be registered with default config")
 	}
 
-	// Every tool should have apple_ prefix.
+	// Every tool should have a category_action naming pattern.
 	for _, tool := range reg.Tools {
-		if tool.Name[:6] != "apple_" {
-			t.Errorf("tool %q missing apple_ prefix", tool.Name)
+		if !strings.Contains(tool.Name, "_") {
+			t.Errorf("tool %q missing category_action pattern", tool.Name)
 		}
 		if tool.Description == "" {
 			t.Errorf("tool %q has empty description", tool.Name)

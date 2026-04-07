@@ -57,7 +57,7 @@ type sendParams struct {
 
 func toolSend() core.Tool {
 	return core.Tool{
-		Name: "apple_messages_send",
+		Name: "messages_send",
 		Description: `Send an iMessage to a phone number or Apple ID.
 
 Sends a text message via the Messages app. The recipient must be reachable via iMessage. Requires Automation permission for Messages.`,
@@ -134,7 +134,7 @@ type historyMessage struct {
 
 func toolRead() core.Tool {
 	return core.Tool{
-		Name: "apple_messages_read",
+		Name: "messages_read",
 		Description: `Read message history with a specific contact.
 
 Reads recent messages from the Messages chat database for a given phone number or Apple ID. Requires Full Disk Access permission in System Settings > Privacy & Security > Full Disk Access.`,
@@ -205,7 +205,7 @@ type unreadMessage struct {
 
 func toolUnread() core.Tool {
 	return core.Tool{
-		Name: "apple_messages_unread",
+		Name: "messages_unread",
 		Description: `Get unread messages from Apple Messages.
 
 Reads unread incoming messages from the Messages chat database. Requires Full Disk Access permission in System Settings > Privacy & Security > Full Disk Access.`,

@@ -26,14 +26,14 @@ func TestRegister(t *testing.T) {
 	}
 
 	expected := []string{
-		"apple_mail_mailboxes",
-		"apple_mail_list",
-		"apple_mail_read",
-		"apple_mail_search",
-		"apple_mail_compose",
-		"apple_mail_reply",
-		"apple_mail_move",
-		"apple_mail_set_status",
+		"mail_mailboxes",
+		"mail_list",
+		"mail_read",
+		"mail_search",
+		"mail_compose",
+		"mail_reply",
+		"mail_move",
+		"mail_set_status",
 	}
 	names := reg.ToolNames()
 	sort.Strings(names)
@@ -64,7 +64,7 @@ func TestRegister_ToolsHaveSchemas(t *testing.T) {
 
 func TestListMessages_EmptyMailbox(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_list", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_list", map[string]any{
 		"mailbox": "",
 	})
 	if err == nil {
@@ -77,7 +77,7 @@ func TestListMessages_EmptyMailbox(t *testing.T) {
 
 func TestListMessages_MissingMailbox(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_list", map[string]any{})
+	_, err := testutil.CallTool(t, reg, "mail_list", map[string]any{})
 	if err == nil {
 		t.Fatal("expected error for missing mailbox")
 	}
@@ -88,7 +88,7 @@ func TestListMessages_MissingMailbox(t *testing.T) {
 
 func TestListMessages_InvalidSinceDate(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_list", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_list", map[string]any{
 		"mailbox": "iCloud/INBOX",
 		"since":   "not-a-date",
 	})
@@ -104,7 +104,7 @@ func TestListMessages_InvalidSinceDate(t *testing.T) {
 
 func TestReadMessage_EmptyMessageID(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_read", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_read", map[string]any{
 		"messageId": "",
 	})
 	if err == nil {
@@ -117,7 +117,7 @@ func TestReadMessage_EmptyMessageID(t *testing.T) {
 
 func TestReadMessage_MissingMessageID(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_read", map[string]any{})
+	_, err := testutil.CallTool(t, reg, "mail_read", map[string]any{})
 	if err == nil {
 		t.Fatal("expected error for missing messageId")
 	}
@@ -141,7 +141,7 @@ func TestSearchMessages_EmptyQuery(t *testing.T) {
 		{},
 	}
 	for _, params := range cases {
-		_, err := testutil.CallTool(t, reg, "apple_mail_search", params)
+		_, err := testutil.CallTool(t, reg, "mail_search", params)
 		// Should not produce ErrInvalidInput; JXA/timeout/permission errors are OK.
 		if errors.Is(err, core.ErrInvalidInput) {
 			t.Errorf("empty query should not produce ErrInvalidInput, params=%v, got: %v", params, err)
@@ -151,7 +151,7 @@ func TestSearchMessages_EmptyQuery(t *testing.T) {
 
 func TestSearchMessages_InvalidSinceDate(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_search", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_search", map[string]any{
 		"query": "test",
 		"since": "bad-date",
 	})
@@ -167,7 +167,7 @@ func TestSearchMessages_InvalidSinceDate(t *testing.T) {
 
 func TestCompose_EmptyTo(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_compose", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_compose", map[string]any{
 		"to":      []string{},
 		"subject": "Test",
 	})
@@ -181,7 +181,7 @@ func TestCompose_EmptyTo(t *testing.T) {
 
 func TestCompose_MissingTo(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_compose", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_compose", map[string]any{
 		"subject": "Test",
 	})
 	if err == nil {
@@ -194,7 +194,7 @@ func TestCompose_MissingTo(t *testing.T) {
 
 func TestCompose_EmptySubject(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_compose", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_compose", map[string]any{
 		"to":      []string{"test@example.com"},
 		"subject": "",
 	})
@@ -208,7 +208,7 @@ func TestCompose_EmptySubject(t *testing.T) {
 
 func TestCompose_EmptyAddressInTo(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_compose", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_compose", map[string]any{
 		"to":      []string{"valid@example.com", ""},
 		"subject": "Test",
 	})
@@ -224,7 +224,7 @@ func TestCompose_EmptyAddressInTo(t *testing.T) {
 
 func TestReply_EmptyMessageID(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_reply", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_reply", map[string]any{
 		"messageId": "",
 		"body":      "Thanks!",
 	})
@@ -238,7 +238,7 @@ func TestReply_EmptyMessageID(t *testing.T) {
 
 func TestReply_MissingMessageID(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_reply", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_reply", map[string]any{
 		"body": "Thanks!",
 	})
 	if err == nil {
@@ -251,7 +251,7 @@ func TestReply_MissingMessageID(t *testing.T) {
 
 func TestReply_EmptyBody(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_reply", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_reply", map[string]any{
 		"messageId": "msg-123@example.com",
 		"body":      "",
 	})
@@ -265,7 +265,7 @@ func TestReply_EmptyBody(t *testing.T) {
 
 func TestReply_MissingBody(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_reply", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_reply", map[string]any{
 		"messageId": "msg-123@example.com",
 	})
 	if err == nil {
@@ -280,7 +280,7 @@ func TestReply_MissingBody(t *testing.T) {
 
 func TestMoveMessage_EmptyMessageID(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_move", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_move", map[string]any{
 		"messageId":          "",
 		"destinationMailbox": "iCloud/Archive",
 	})
@@ -294,7 +294,7 @@ func TestMoveMessage_EmptyMessageID(t *testing.T) {
 
 func TestMoveMessage_MissingMessageID(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_move", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_move", map[string]any{
 		"destinationMailbox": "iCloud/Archive",
 	})
 	if err == nil {
@@ -307,7 +307,7 @@ func TestMoveMessage_MissingMessageID(t *testing.T) {
 
 func TestMoveMessage_EmptyDestination(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_move", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_move", map[string]any{
 		"messageId":          "msg-123@example.com",
 		"destinationMailbox": "",
 	})
@@ -321,7 +321,7 @@ func TestMoveMessage_EmptyDestination(t *testing.T) {
 
 func TestMoveMessage_MissingDestination(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_move", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_move", map[string]any{
 		"messageId": "msg-123@example.com",
 	})
 	if err == nil {
@@ -336,7 +336,7 @@ func TestMoveMessage_MissingDestination(t *testing.T) {
 
 func TestSetStatus_EmptyMessageID(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_set_status", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_set_status", map[string]any{
 		"messageId": "",
 		"isRead":    true,
 	})
@@ -350,7 +350,7 @@ func TestSetStatus_EmptyMessageID(t *testing.T) {
 
 func TestSetStatus_MissingMessageID(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_set_status", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_set_status", map[string]any{
 		"isRead": true,
 	})
 	if err == nil {
@@ -363,7 +363,7 @@ func TestSetStatus_MissingMessageID(t *testing.T) {
 
 func TestSetStatus_NoFieldsSpecified(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_mail_set_status", map[string]any{
+	_, err := testutil.CallTool(t, reg, "mail_set_status", map[string]any{
 		"messageId": "msg-123@example.com",
 	})
 	if err == nil {
@@ -404,7 +404,7 @@ func TestListMailboxes_Integration(t *testing.T) {
 	}
 
 	reg := newRegistry()
-	result, err := testutil.CallTool(t, reg, "apple_mail_mailboxes", map[string]any{})
+	result, err := testutil.CallTool(t, reg, "mail_mailboxes", map[string]any{})
 	if err != nil {
 		// Permission, app-not-running, and timeout errors are expected
 		// in CI, sandboxed environments, or headless setups.

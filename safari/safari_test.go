@@ -15,10 +15,10 @@ func TestRegister(t *testing.T) {
 	Register(reg)
 
 	expected := []string{
-		"apple_safari_tabs",
-		"apple_safari_get_page",
-		"apple_safari_bookmarks",
-		"apple_safari_reading_list",
+		"safari_tabs",
+		"safari_get_page",
+		"safari_bookmarks",
+		"safari_reading_list",
 	}
 
 	if len(reg.Tools) != len(expected) {
@@ -48,7 +48,7 @@ func TestIntegrationListTabs(t *testing.T) {
 	reg := &testutil.MockRegistry{}
 	Register(reg)
 
-	result, err := testutil.CallTool(t, reg, "apple_safari_tabs", map[string]any{})
+	result, err := testutil.CallTool(t, reg, "safari_tabs", map[string]any{})
 	if err != nil {
 		t.Logf("safari tabs returned error (may not be running): %v", err)
 		return
@@ -68,7 +68,7 @@ func TestIntegrationReadingList(t *testing.T) {
 	reg := &testutil.MockRegistry{}
 	Register(reg)
 
-	result, err := testutil.CallTool(t, reg, "apple_safari_reading_list", map[string]any{"limit": 3})
+	result, err := testutil.CallTool(t, reg, "safari_reading_list", map[string]any{"limit": 3})
 	if err != nil {
 		t.Logf("reading list returned error: %v", err)
 		return

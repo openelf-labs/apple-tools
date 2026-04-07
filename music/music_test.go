@@ -26,14 +26,14 @@ func TestRegister(t *testing.T) {
 	}
 
 	expected := []string{
-		"apple_music_now_playing",
-		"apple_music_play",
-		"apple_music_pause",
-		"apple_music_next",
-		"apple_music_previous",
-		"apple_music_search_play",
-		"apple_music_volume",
-		"apple_music_playlists",
+		"music_now_playing",
+		"music_play",
+		"music_pause",
+		"music_next",
+		"music_previous",
+		"music_search_play",
+		"music_volume",
+		"music_playlists",
 	}
 	names := reg.ToolNames()
 	sort.Strings(names)
@@ -64,7 +64,7 @@ func TestRegister_ToolsHaveSchemas(t *testing.T) {
 
 func TestSearchPlay_EmptyQuery(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_music_search_play", map[string]any{
+	_, err := testutil.CallTool(t, reg, "music_search_play", map[string]any{
 		"query": "",
 	})
 	if err == nil {
@@ -77,7 +77,7 @@ func TestSearchPlay_EmptyQuery(t *testing.T) {
 
 func TestSearchPlay_MissingQuery(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_music_search_play", map[string]any{})
+	_, err := testutil.CallTool(t, reg, "music_search_play", map[string]any{})
 	if err == nil {
 		t.Fatal("expected error for missing query")
 	}
@@ -88,7 +88,7 @@ func TestSearchPlay_MissingQuery(t *testing.T) {
 
 func TestSearchPlay_InvalidType(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_music_search_play", map[string]any{
+	_, err := testutil.CallTool(t, reg, "music_search_play", map[string]any{
 		"query": "test",
 		"type":  "album",
 	})
@@ -102,7 +102,7 @@ func TestSearchPlay_InvalidType(t *testing.T) {
 
 func TestVolume_MissingLevel(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_music_volume", map[string]any{})
+	_, err := testutil.CallTool(t, reg, "music_volume", map[string]any{})
 	if err == nil {
 		t.Fatal("expected error for missing level")
 	}
@@ -113,7 +113,7 @@ func TestVolume_MissingLevel(t *testing.T) {
 
 func TestVolume_BelowZero(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_music_volume", map[string]any{
+	_, err := testutil.CallTool(t, reg, "music_volume", map[string]any{
 		"level": -1,
 	})
 	if err == nil {
@@ -126,7 +126,7 @@ func TestVolume_BelowZero(t *testing.T) {
 
 func TestVolume_Above100(t *testing.T) {
 	reg := newRegistry()
-	_, err := testutil.CallTool(t, reg, "apple_music_volume", map[string]any{
+	_, err := testutil.CallTool(t, reg, "music_volume", map[string]any{
 		"level": 101,
 	})
 	if err == nil {
@@ -166,7 +166,7 @@ func TestNowPlaying_Integration(t *testing.T) {
 	}
 
 	reg := newRegistry()
-	result, err := testutil.CallTool(t, reg, "apple_music_now_playing", map[string]any{})
+	result, err := testutil.CallTool(t, reg, "music_now_playing", map[string]any{})
 	if err != nil {
 		if errors.Is(err, core.ErrPermissionDenied) {
 			t.Skip("skipping: Music permission not granted")
