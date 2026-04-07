@@ -3,9 +3,12 @@
 package mcpserver
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -214,4 +217,272 @@ func TestEnvBool(t *testing.T) {
 	if !envBoolDefault(key, false) {
 		t.Error("expected 1 to parse as true")
 	}
+}
+
+func TestPermissionState_NeedsProbe(t *testing.T) {
+	clearNeedsProbe("contacts")
+
+	if categoryNeedsProbe("contacts") {
+		t.Error("expected contacts not flagged initially")
+	}
+
+	markNeedsProbe("contacts")
+	if !categoryNeedsProbe("contacts") {
+		t.Error("expected contacts flagged after marking")
+	}
+
+	// Other categories unaffected.
+	if categoryNeedsProbe("calendar") {
+		t.Error("expected calendar not flagged")
+	}
+
+	clearNeedsProbe("contacts")
+	if categoryNeedsProbe("contacts") {
+		t.Error("expected contacts cleared")
+	}
+}
+
+func TestRequiresPermission(t *testing.T) {
+	tests := []struct {
+		category string
+		want     bool
+	}{
+		{"contacts", true},
+		{"calendar", true},
+		{"mail", true},
+		{"messages", true},   // full_disk_access
+		{"shortcuts", false}, // none
+		{"system", false},
+		{"clipboard", false},
+		{"nonexistent", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.category, func(t *testing.T) {
+			if got := requiresPermission(tt.category); got != tt.want {
+				t.Errorf("requiresPermission(%q) = %v, want %v", tt.category, got, tt.want)
+			}
+		})
+	}
+}
+
+// TestRegisterTool_PermissionDenied_MarksNeedsProbe verifies that a tool
+// returning ErrPermissionDenied sets the needs-probe flag and returns the
+// structured permission_denied JSON.
+func TestRegisterTool_PermissionDenied_MarksNeedsProbe(t *testing.T) {
+	clearNeedsProbe("contacts")
+	defer clearNeedsProbe("contacts")
+
+	server := mcp.NewServer(&mcp.Implementation{Name: "test", Version: "0"}, nil)
+	callCount := 0
+	registerTool(server, core.Tool{
+		Name:        "contacts_search",
+		Description: "test",
+		Parameters:  []byte(`{"type":"object"}`),
+		Handler: func(_ context.Context, _ json.RawMessage) (string, error) {
+			callCount++
+			return "", core.NewPermissionError("Contacts", "contacts")
+		},
+	})
+
+	result := callMCPTool(t, server, "contacts_search", `{}`)
+	if !result.IsError {
+		t.Fatal("expected IsError=true")
+	}
+	if callCount != 1 {
+		t.Errorf("handler called %d times, want 1", callCount)
+	}
+	if !categoryNeedsProbe("contacts") {
+		t.Error("expected needs-probe flag set after permission denied")
+	}
+	// Verify structured JSON
+	text := result.Content[0].(*mcp.TextContent).Text
+	if !strings.Contains(text, `"permission_denied"`) {
+		t.Errorf("expected permission_denied in response, got: %s", text)
+	}
+}
+
+// TestRegisterTool_Timeout_MarksNeedsProbe verifies that a timeout in a
+// permission-requiring category is treated as a permission error.
+func TestRegisterTool_Timeout_MarksNeedsProbe(t *testing.T) {
+	clearNeedsProbe("contacts")
+	defer clearNeedsProbe("contacts")
+
+	server := mcp.NewServer(&mcp.Implementation{Name: "test", Version: "0"}, nil)
+	registerTool(server, core.Tool{
+		Name:        "contacts_search",
+		Description: "test",
+		Parameters:  []byte(`{"type":"object"}`),
+		Handler: func(_ context.Context, _ json.RawMessage) (string, error) {
+			return "", fmt.Errorf("%w: osascript killed after timeout", core.ErrTimeout)
+		},
+	})
+
+	result := callMCPTool(t, server, "contacts_search", `{}`)
+	if !result.IsError {
+		t.Fatal("expected IsError=true")
+	}
+	if !categoryNeedsProbe("contacts") {
+		t.Error("expected needs-probe flag set after timeout")
+	}
+	text := result.Content[0].(*mcp.TextContent).Text
+	if !strings.Contains(text, `"permission_denied"`) {
+		t.Errorf("expected permission_denied in response for timeout, got: %s", text)
+	}
+}
+
+// TestRegisterTool_Timeout_NonPermissionCategory verifies that a timeout
+// in a non-permission category is NOT treated as a permission error.
+func TestRegisterTool_Timeout_NonPermissionCategory(t *testing.T) {
+	server := mcp.NewServer(&mcp.Implementation{Name: "test", Version: "0"}, nil)
+	registerTool(server, core.Tool{
+		Name:        "system_battery",
+		Description: "test",
+		Parameters:  []byte(`{"type":"object"}`),
+		Handler: func(_ context.Context, _ json.RawMessage) (string, error) {
+			return "", fmt.Errorf("%w: osascript killed after timeout", core.ErrTimeout)
+		},
+	})
+
+	result := callMCPTool(t, server, "system_battery", `{}`)
+	if !result.IsError {
+		t.Fatal("expected IsError=true")
+	}
+	text := result.Content[0].(*mcp.TextContent).Text
+	// Should be a plain error, not permission_denied
+	if strings.Contains(text, `"permission_denied"`) {
+		t.Errorf("non-permission category should not produce permission_denied, got: %s", text)
+	}
+}
+
+// TestRegisterTool_ProbeOnRetry_Granted verifies that after a denial, if the
+// user grants permission, the next call succeeds via probe-on-retry.
+func TestRegisterTool_ProbeOnRetry_Granted(t *testing.T) {
+	clearNeedsProbe("contacts")
+	defer clearNeedsProbe("contacts")
+
+	// Override probeFn to simulate "granted" on probe.
+	origProbe := probeFn
+	defer func() { probeFn = origProbe }()
+	probeFn = func(_ context.Context, _ string) core.PermissionStatus {
+		return core.PermissionStatus{Status: "granted", Permission: "automation"}
+	}
+
+	server := mcp.NewServer(&mcp.Implementation{Name: "test", Version: "0"}, nil)
+	callCount := 0
+	registerTool(server, core.Tool{
+		Name:        "contacts_search",
+		Description: "test",
+		Parameters:  []byte(`{"type":"object"}`),
+		Handler: func(_ context.Context, _ json.RawMessage) (string, error) {
+			callCount++
+			return `{"contacts":[]}`, nil
+		},
+	})
+
+	// Simulate: previous call set the probe flag (e.g., permission was denied).
+	markNeedsProbe("contacts")
+
+	// Next call should probe → see "granted" → clear flag → run handler.
+	result := callMCPTool(t, server, "contacts_search", `{}`)
+	if result.IsError {
+		t.Fatalf("expected success after probe-granted, got error: %s", result.Content[0].(*mcp.TextContent).Text)
+	}
+	if callCount != 1 {
+		t.Errorf("handler called %d times, want 1", callCount)
+	}
+	if categoryNeedsProbe("contacts") {
+		t.Error("expected probe flag cleared after successful probe")
+	}
+}
+
+// TestRegisterTool_ProbeOnRetry_StillDenied verifies that after a denial,
+// if the user hasn't granted permission, the next call returns the error
+// immediately without calling the handler (no osascript = no TCC dialog).
+func TestRegisterTool_ProbeOnRetry_StillDenied(t *testing.T) {
+	clearNeedsProbe("contacts")
+	defer clearNeedsProbe("contacts")
+
+	origProbe := probeFn
+	defer func() { probeFn = origProbe }()
+	probeFn = func(_ context.Context, _ string) core.PermissionStatus {
+		return core.PermissionStatus{Status: "denied", Permission: "automation"}
+	}
+
+	server := mcp.NewServer(&mcp.Implementation{Name: "test", Version: "0"}, nil)
+	callCount := 0
+	registerTool(server, core.Tool{
+		Name:        "contacts_search",
+		Description: "test",
+		Parameters:  []byte(`{"type":"object"}`),
+		Handler: func(_ context.Context, _ json.RawMessage) (string, error) {
+			callCount++
+			return "", nil
+		},
+	})
+
+	markNeedsProbe("contacts")
+
+	result := callMCPTool(t, server, "contacts_search", `{}`)
+	if !result.IsError {
+		t.Fatal("expected error when probe returns denied")
+	}
+	if callCount != 0 {
+		t.Errorf("handler should NOT be called when probe returns denied, got %d calls", callCount)
+	}
+	text := result.Content[0].(*mcp.TextContent).Text
+	if !strings.Contains(text, `"permission_denied"`) {
+		t.Errorf("expected permission_denied, got: %s", text)
+	}
+}
+
+// TestRegisterTool_SuccessClearsProbeFlag verifies that a successful tool
+// call clears any stale needs-probe flag.
+func TestRegisterTool_SuccessClearsProbeFlag(t *testing.T) {
+	clearNeedsProbe("system")
+	defer clearNeedsProbe("system")
+
+	server := mcp.NewServer(&mcp.Implementation{Name: "test", Version: "0"}, nil)
+	registerTool(server, core.Tool{
+		Name:        "system_battery",
+		Description: "test",
+		Parameters:  []byte(`{"type":"object"}`),
+		Handler: func(_ context.Context, _ json.RawMessage) (string, error) {
+			return `{"level":85}`, nil
+		},
+	})
+
+	// Even if somehow flagged, success should clear.
+	markNeedsProbe("system")
+	result := callMCPTool(t, server, "system_battery", `{}`)
+	if result.IsError {
+		t.Fatal("expected success")
+	}
+	if categoryNeedsProbe("system") {
+		t.Error("expected probe flag cleared after success")
+	}
+}
+
+// callMCPTool is a test helper that creates an in-memory client/server pair,
+// initializes the session, and calls the named tool.
+func callMCPTool(t *testing.T, server *mcp.Server, toolName, argsJSON string) *mcp.CallToolResult {
+	t.Helper()
+	ctx := context.Background()
+	ct, st := mcp.NewInMemoryTransports()
+
+	go func() { _ = server.Run(ctx, st) }()
+
+	client := mcp.NewClient(&mcp.Implementation{Name: "test-client", Version: "0"}, nil)
+	session, err := client.Connect(ctx, ct, nil)
+	if err != nil {
+		t.Fatalf("client.Connect: %v", err)
+	}
+
+	result, err := session.CallTool(ctx, &mcp.CallToolParams{
+		Name:      toolName,
+		Arguments: json.RawMessage(argsJSON),
+	})
+	if err != nil {
+		t.Fatalf("CallTool(%q) transport error: %v", toolName, err)
+	}
+	return result
 }
