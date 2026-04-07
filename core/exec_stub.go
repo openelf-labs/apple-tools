@@ -5,7 +5,14 @@ package core
 import (
 	"context"
 	"encoding/json"
+	"time"
 )
+
+// DefaultTimeout is the default timeout for Apple tool operations.
+const DefaultTimeout = 30 * time.Second
+
+// ParamsEnvKey is the environment variable used to pass JSON parameters.
+const ParamsEnvKey = "APPLE_TOOLS_PARAMS"
 
 // RunJXA is a stub for non-macOS platforms.
 func RunJXA(_ context.Context, _ []byte, _ any) (json.RawMessage, error) {
